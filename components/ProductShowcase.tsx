@@ -3,8 +3,8 @@
 import { useLanguage } from "@/lib/i18n";
 import { Button } from "@/components/ui/Button";
 
-const DEMO_ORIGIN = "http://localhost:3000";
-const DEMO_DISPLAY_HOST = "demo.tudiadeblanco";
+const DEMO_ORIGIN = "https://demo.tudiadeblanco.com";
+const DEMO_DISPLAY_HOST = "demo.tudiadeblanco.com";
 
 type FeatureSection = {
   id: string;

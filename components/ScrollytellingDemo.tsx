@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 
+const DEMO_ORIGIN = "https://demo.tudiadeblanco.com";
+const DEMO_DISPLAY_HOST = "demo.tudiadeblanco.com";
+
 /* ─── Step data (Gallery removed) ─────────────────────────────────────────── */
 const steps = [
   {
@@ -150,10 +153,11 @@ export function ScrollytellingDemo() {
                     <span className="dot dot-green" />
                   </div>
                   <div className="panel-url-bar">
-                    demo.tudiadeblanco{step.route === "/" ? "" : step.route}
+                    {DEMO_DISPLAY_HOST}
+                    {step.route === "/" ? "" : step.route}
                   </div>
                   <a
-                    href={`http://localhost:3000${step.route}`}
+                    href={`${DEMO_ORIGIN}${step.route}`}
                     target="_blank"
                     rel="noreferrer"
                     className="panel-open-link"
@@ -171,7 +175,7 @@ export function ScrollytellingDemo() {
                 <div className="panel-body">
                   <div className="panel-iframe-scale">
                     <iframe
-                      src={`http://localhost:3000${step.route}`}
+                      src={`${DEMO_ORIGIN}${step.route}`}
                       title={step.title}
                       className="panel-iframe"
                       loading="lazy"
