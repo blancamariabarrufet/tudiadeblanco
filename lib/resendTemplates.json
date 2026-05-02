@@ -1,0 +1,44 @@
+[
+  {
+    "alias": "tu-dia-de-blanco-form-confirmation",
+    "id": "a48cadcb-6902-47de-96b7-be299d657277",
+    "name": "Tu dia de blanco - Form confirmation",
+    "subject": "{{{SUBJECT}}}",
+    "html": "<!doctype html><html><body style=\"margin:0;background:#f7f3ed;color:#1a1c1a;font-family:Georgia,serif;\"><div style=\"max-width:640px;margin:0 auto;padding:40px 20px;\"><div style=\"background:#fffaf4;border:1px solid #e6ded2;border-radius:18px;padding:34px;\"><p style=\"margin:0 0 12px;font-family:Arial,sans-serif;font-size:12px;letter-spacing:1.8px;text-transform:uppercase;color:#7b6a5b;\">Tu dia de blanco</p><h1 style=\"margin:0 0 18px;font-size:34px;line-height:1.1;font-weight:400;\">{{{TITLE}}}</h1><p style=\"margin:0 0 22px;font-size:18px;line-height:1.65;\">{{{INTRO}}}</p><div style=\"border-top:1px solid #e6ded2;border-bottom:1px solid #e6ded2;padding:18px 0;margin:24px 0;\"><p style=\"margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;color:#7b6a5b;\">{{{SUMMARY_LABEL}}}</p><p style=\"margin:0;font-size:17px;line-height:1.55;\"><strong>{{{COUPLE_NAME}}}</strong><br>{{{WEDDING_DATE}}}<br>{{{CEREMONY_VENUE}}}</p></div><p style=\"margin:0 0 10px;font-size:16px;line-height:1.6;\">{{{FEATURES_LABEL}}}: {{{FEATURES}}}</p><p style=\"margin:0 0 22px;font-size:16px;line-height:1.6;\">{{{NEXT_STEPS}}}</p><p style=\"margin:0;font-family:Arial,sans-serif;font-size:13px;line-height:1.6;color:#7b6a5b;\">{{{SIGNATURE}}}</p></div></div></body></html>",
+    "text": "{{{TITLE}}}\n\n{{{INTRO}}}\n\n{{{SUMMARY_LABEL}}}\n{{{COUPLE_NAME}}}\n{{{WEDDING_DATE}}}\n{{{CEREMONY_VENUE}}}\n\n{{{FEATURES_LABEL}}}: {{{FEATURES}}}\n\n{{{NEXT_STEPS}}}\n\n{{{SIGNATURE}}}",
+    "variables": [
+      { "key": "SUBJECT", "type": "string", "fallbackValue": "We received your request" },
+      { "key": "TITLE", "type": "string", "fallbackValue": "We received your request." },
+      { "key": "INTRO", "type": "string", "fallbackValue": "Thank you for sharing your wedding details with us." },
+      { "key": "SUMMARY_LABEL", "type": "string", "fallbackValue": "Request summary" },
+      { "key": "COUPLE_NAME", "type": "string", "fallbackValue": "Your wedding" },
+      { "key": "WEDDING_DATE", "type": "string", "fallbackValue": "Date to confirm" },
+      { "key": "CEREMONY_VENUE", "type": "string", "fallbackValue": "Venue to confirm" },
+      { "key": "FEATURES_LABEL", "type": "string", "fallbackValue": "Selected features" },
+      { "key": "FEATURES", "type": "string", "fallbackValue": "To be confirmed" },
+      { "key": "NEXT_STEPS", "type": "string", "fallbackValue": "We will contact you soon with the next steps." },
+      { "key": "SIGNATURE", "type": "string", "fallbackValue": "Tu dia de blanco" }
+    ]
+  },
+  {
+    "alias": "tu-dia-de-blanco-chatbot-confirmation",
+    "id": "ec42db60-e92f-42d6-94c3-cf19cb4feefd",
+    "name": "Tu dia de blanco - Chatbot confirmation",
+    "subject": "{{{SUBJECT}}}",
+    "html": "<!doctype html><html><body style=\"margin:0;background:#f7f3ed;color:#1a1c1a;font-family:Georgia,serif;\"><div style=\"max-width:640px;margin:0 auto;padding:40px 20px;\"><div style=\"background:#fffaf4;border:1px solid #e6ded2;border-radius:18px;padding:34px;\"><p style=\"margin:0 0 12px;font-family:Arial,sans-serif;font-size:12px;letter-spacing:1.8px;text-transform:uppercase;color:#7b6a5b;\">The Invisible Host</p><h1 style=\"margin:0 0 18px;font-size:34px;line-height:1.1;font-weight:400;\">{{{TITLE}}}</h1><p style=\"margin:0 0 22px;font-size:18px;line-height:1.65;\">{{{INTRO}}}</p><div style=\"border-top:1px solid #e6ded2;border-bottom:1px solid #e6ded2;padding:18px 0;margin:24px 0;\"><p style=\"margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;color:#7b6a5b;\">{{{SUMMARY_LABEL}}}</p><p style=\"margin:0;font-size:17px;line-height:1.55;\"><strong>{{{COUPLE_NAME}}}</strong><br>{{{WEDDING_DATE}}}<br>{{{CEREMONY_VENUE}}}</p></div><p style=\"margin:0 0 10px;font-size:16px;line-height:1.6;\">{{{TONE_LABEL}}}: {{{TONE}}}</p><p style=\"margin:0 0 22px;font-size:16px;line-height:1.6;\">{{{NEXT_STEPS}}}</p><p style=\"margin:0;font-family:Arial,sans-serif;font-size:13px;line-height:1.6;color:#7b6a5b;\">{{{SIGNATURE}}}</p></div></div></body></html>",
+    "text": "{{{TITLE}}}\n\n{{{INTRO}}}\n\n{{{SUMMARY_LABEL}}}\n{{{COUPLE_NAME}}}\n{{{WEDDING_DATE}}}\n{{{CEREMONY_VENUE}}}\n\n{{{TONE_LABEL}}}: {{{TONE}}}\n\n{{{NEXT_STEPS}}}\n\n{{{SIGNATURE}}}",
+    "variables": [
+      { "key": "SUBJECT", "type": "string", "fallbackValue": "Your chatbot preview is ready" },
+      { "key": "TITLE", "type": "string", "fallbackValue": "Your chatbot preview is ready." },
+      { "key": "INTRO", "type": "string", "fallbackValue": "Thank you for trying The Invisible Host." },
+      { "key": "SUMMARY_LABEL", "type": "string", "fallbackValue": "Chatbot brief" },
+      { "key": "COUPLE_NAME", "type": "string", "fallbackValue": "Your wedding" },
+      { "key": "WEDDING_DATE", "type": "string", "fallbackValue": "Date to confirm" },
+      { "key": "CEREMONY_VENUE", "type": "string", "fallbackValue": "Venue to confirm" },
+      { "key": "TONE_LABEL", "type": "string", "fallbackValue": "Assistant tone" },
+      { "key": "TONE", "type": "string", "fallbackValue": "Warm and elegant" },
+      { "key": "NEXT_STEPS", "type": "string", "fallbackValue": "You can keep refining your wedding details whenever you are ready." },
+      { "key": "SIGNATURE", "type": "string", "fallbackValue": "Tu dia de blanco" }
+    ]
+  }
+]

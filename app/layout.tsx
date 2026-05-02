@@ -25,8 +25,8 @@ const workSans = Work_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "tu dia de blanco",
-  description: "Editorial wedding websites with an elegant digital concierge.",
+  title: "Tu dia de blanco",
+  description: "Editorial wedding websites with an elegant digital assistant.",
   icons: {
     icon: [
       { url: "/icon.png", type: "image/png" },

@@ -20,11 +20,30 @@ type LanguageContextValue = {
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
+function getInitialLocale(): Locale {
+  if (typeof window === "undefined") {
+    return "es";
+  }
+
+  const urlLocale = new URLSearchParams(window.location.search).get("lang");
+  if (urlLocale === "en" || urlLocale === "es") {
+    return urlLocale;
+  }
+
+  const savedLocale = window.localStorage.getItem("tdb-locale");
+  if (savedLocale === "en" || savedLocale === "es") {
+    return savedLocale;
+  }
+
+  return "es";
+}
+
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocale] = useState<Locale>("es");
+  const [locale, setLocale] = useState<Locale>(getInitialLocale);
 
   useEffect(() => {
     document.documentElement.lang = locale;
+    window.localStorage.setItem("tdb-locale", locale);
   }, [locale]);
 
   const t = useCallback(
@@ -57,6 +76,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.host": "Our Invisible Host",
     "nav.process": "Process",
     "nav.product": "Product",
+    "nav.login": "Login",
     "nav.cta": "Begin Your Story",
     "nav.mobileTitle": "The Digital Heirloom.",
 
@@ -65,11 +85,12 @@ const translations: Record<Locale, Record<string, string>> = {
     "hero.headline1": "Your Love Story,",
     "hero.headline2": "Elegantly Digital.",
     "hero.body":
-      "Beyond a simple website, tu dia de blanco creates a bespoke digital experience. Featuring",
+      "Beyond a simple website, Tu dia de blanco creates a bespoke digital experience. Featuring",
     "hero.hostName": "The Invisible Host",
-    "hero.bodyEnd": "\u2014 an AI concierge crafted to assist your guests with grace.",
+    "hero.bodyEnd": "\u2014 an AI assistant crafted to help your guests with grace.",
     "hero.cta": "Begin Your Story",
     "hero.secondary": "Discover our product",
+    "hero.tryAi": "Try your AI",
     "hero.quote": "\u201CA masterpiece of digital grace.\u201D",
     "hero.attribution": "Vogue Weddings",
 
@@ -78,9 +99,9 @@ const translations: Record<Locale, Record<string, string>> = {
     "features.sub":
       "We combine timeless aesthetics with the convenience of tomorrow.",
     "features.hostLabel": "The Invisible Host",
-    "features.aiTitle": "AI Concierge",
+    "features.aiTitle": "AI Assistant",
     "features.aiBody":
-      "A personalized AI trained on your wedding details. Whether guests need directions, dress code advice, or gift registry links, your concierge responds instantly with the warmth of a human assistant.",
+      "A personalized AI trained on your wedding details. Whether guests need directions, dress code advice, or gift registry links, your assistant responds instantly with a warm, human tone.",
     "features.aiLink": "Discover the magic \u2192",
     "features.designTitle": "Bespoke Design",
     "features.designBody":
@@ -126,7 +147,7 @@ const translations: Record<Locale, Record<string, string>> = {
       "\u00A9 2025, The Ethereal Concierge. Crafted for the Modern Heirloom.",
     "footer.privacy": "Privacy",
     "footer.terms": "Terms",
-    "footer.concierge": "Concierge Access",
+    "footer.concierge": "Assistant Access",
     "footer.press": "Press",
 
     // Order form
@@ -143,15 +164,37 @@ const translations: Record<Locale, Record<string, string>> = {
     "order.step6": "What would you like?",
     "order.featureHint":
       "Selected experiences become part of your tailored digital heirloom.",
-    "order.step7": "Physical invitations?",
+    "order.step7": "How should the website feel?",
+    "order.vibeQuestion": "What's the overall vibe?",
+    "order.paletteQuestion": "Any color preferences or palette ideas?",
+    "order.typographyQuestion": "Typography",
+    "order.customSelection": "Write another selection",
+    "order.customVibePlaceholder": "Something else, e.g. art deco dinner party",
+    "order.customPalettePlaceholder": "Something else, e.g. cream, aubergine, olive",
+    "order.typographyGuide":
+      "A common pattern is pairing a script for names with a serif for body copy, or using Cinzel for structural elements like dates and venue alongside Cormorant for prose.",
+    "order.typographyLimit": "Select 1 to 3 options.",
+    "order.decideTypography": "Decide for me",
+    "order.primaryTypography": "Primary",
+    "order.secondaryTypography": "Secondary",
+    "order.textTypography": "Text",
     "order.yesPlease": "Yes, please",
     "order.digitalOnly": "Digital only",
-    "order.step8": "Describe your aesthetic.",
-    "order.aestheticLabel": "Aesthetic note",
-    "order.step9": "Your email.",
+    "order.step8": "Add inspiration images?",
+    "order.imagesLabel": "Upload images",
+    "order.imagesHint":
+      "Optional. Add up to 6 images with references, mood, venues, stationery, or visual inspiration.",
+    "order.removeImage": "Remove",
+    "order.images": "Images",
+    "order.step9": "Physical invitations?",
+    "order.paperInvitationHint":
+      "If you would like paper invitations, we will contact you to collect all the necessary details.",
+    "order.digitalInvitationHint":
+      "If you prefer digital only, we will continue with the website details and no paper invitation information is needed.",
+    "order.step10": "Your email.",
     "order.emailLabel": "Email address",
     "order.emailHint": "We\u2019ll be in touch within 24 hours.",
-    "order.step10": "Review & send",
+    "order.step11": "Review & send",
     "order.names": "Names",
     "order.weddingDate": "Wedding date",
     "order.ceremonyVenue": "Ceremony venue",
@@ -159,7 +202,9 @@ const translations: Record<Locale, Record<string, string>> = {
     "order.guestCount": "Guest count",
     "order.selectedFeatures": "Selected features",
     "order.physicalInvitations": "Physical invitations",
-    "order.aesthetic": "Aesthetic",
+    "order.overallVibe": "Overall vibe",
+    "order.colorPalette": "Color palette",
+    "order.typography": "Typography",
     "order.email": "Email",
     "order.notProvided": "Not provided",
     "order.noneSelected": "None selected",
@@ -167,11 +212,61 @@ const translations: Record<Locale, Record<string, string>> = {
     "order.back": "Back",
     "order.continue": "Continue",
     "order.send": "Send My Request",
+    "order.saving": "Saving...",
+    "order.saveError": "We could not save your request. Please try again.",
     "order.received": "Received",
     "order.confirmTitle": "We\u2019ll be in touch soon.",
     "order.confirmBody":
       "Your request is with our team. Expect a note from us within 24 hours.",
     "order.close": "Close",
+
+    // Invisible Host page
+    "invisible.hero.eyebrow": "THE INVISIBLE HOST",
+    "invisible.hero.title": "Try your wedding chatbot.",
+    "invisible.hero.body":
+      "Share the details your guests ask about most. The preview builds an assistant voice from your wedding brief.",
+    "invisible.form.title": "Wedding brief",
+    "invisible.form.partnerOne": "Partner 1",
+    "invisible.form.partnerTwo": "Partner 2",
+    "invisible.form.email": "Email",
+    "invisible.form.date": "Wedding date",
+    "invisible.form.ceremony": "Ceremony venue",
+    "invisible.form.reception": "Reception venue",
+    "invisible.form.dress": "Dress code",
+    "invisible.form.arrival": "Arrival note",
+    "invisible.form.tone": "Tone",
+    "invisible.form.notes": "Extra details",
+    "invisible.form.required":
+      "Names, email, date, and ceremony are required to start.",
+    "invisible.form.generate": "Generate chatbot",
+    "invisible.form.update": "Update chatbot",
+    "invisible.form.saving": "Saving...",
+    "invisible.form.saveError":
+      "We could not save your data. Please try again.",
+    "invisible.form.partnerOnePlaceholder": "Sara",
+    "invisible.form.partnerTwoPlaceholder": "James",
+    "invisible.form.emailPlaceholder": "you@example.com",
+    "invisible.form.ceremonyPlaceholder": "Santa Maria del Mar",
+    "invisible.form.receptionPlaceholder": "Mas Torroella",
+    "invisible.form.dressPlaceholder": "Summer cocktail, linen welcome",
+    "invisible.form.arrivalPlaceholder": "Shuttle from the hotel at 17:15",
+    "invisible.form.tonePlaceholder": "Warm, elegant, concise",
+    "invisible.form.notesPlaceholder":
+      "Children welcome, garden ceremony, late-night churros...",
+    "invisible.chat.title": "Live chatbot",
+    "invisible.chat.ready": "Assistant preview",
+    "invisible.chat.empty": "Your generated host will appear here.",
+    "invisible.chat.placeholder": "Ask a guest question...",
+    "invisible.chat.send": "Send question",
+    "invisible.quick.dress": "What should I wear?",
+    "invisible.quick.where": "Where is the ceremony?",
+    "invisible.quick.transport": "How do I get there?",
+    "invisible.fallback.names": "the couple",
+    "invisible.fallback.date": "the wedding date",
+    "invisible.fallback.reception": "the reception venue",
+    "invisible.fallback.dress": "elegant wedding attire",
+    "invisible.fallback.arrival":
+      "I recommend checking the wedding site for final transport details.",
 
     // Product page — showcase
     "product.hero.eyebrow": "THE PRODUCT",
@@ -180,6 +275,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "product.hero.sub":
       "Every page your guests will experience \u2014 rendered live, right here. Click, scroll, and explore the demo as if it were your own.",
     "product.hero.primary": "Begin Your Story",
+    "product.hero.tryAi": "Try your AI",
     "product.hero.secondary": "Open full demo",
     "product.hero.hint": "Try it \u2014 the demo below is fully interactive.",
 
@@ -210,7 +306,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "product.aloja.eyebrow": "ACCOMMODATION",
     "product.aloja.title": "Handpicked hotels, shared with care.",
     "product.aloja.body":
-      "Take care of your guests by listing curated accommodation options \u2014 with your group discount code front and centre so booking is instant. Your AI concierge can also answer accommodation questions in the chat.",
+      "Take care of your guests by listing curated accommodation options \u2014 with your group discount code front and centre so booking is instant. Your AI assistant can also answer accommodation questions in the chat.",
     "product.aloja.link": "See the stays \u2197",
 
     "product.closing.title1": "Ready to craft",
@@ -223,9 +319,10 @@ const translations: Record<Locale, Record<string, string>> = {
   es: {
     // Nav
     "nav.experience": "Experiencia",
-    "nav.host": "Nuestro Anfitri\u00F3n",
+    "nav.host": "The invisible host",
     "nav.process": "Proceso",
     "nav.product": "Producto",
+    "nav.login": "Login",
     "nav.cta": "Comienza Tu Historia",
     "nav.mobileTitle": "La Herencia Digital.",
 
@@ -234,12 +331,13 @@ const translations: Record<Locale, Record<string, string>> = {
     "hero.headline1": "Tu Historia de Amor,",
     "hero.headline2": "Elegantemente Digital.",
     "hero.body":
-      "M\u00E1s que un simple sitio web, tu dia de blanco crea una experiencia digital a medida. Con",
+      "M\u00E1s que un simple sitio web, Tu dia de blanco crea una experiencia digital a medida. Con",
     "hero.hostName": "The Invisible Host",
     "hero.bodyEnd":
-      "\u2014 un conserje con IA dise\u00F1ado para asistir a tus invitados con elegancia.",
+      "\u2014 un asistente con IA dise\u00F1ado para ayudar a tus invitados con elegancia.",
     "hero.cta": "Comienza Tu Historia",
     "hero.secondary": "Descubre nuestro producto",
+    "hero.tryAi": "Prueba tu IA",
     "hero.quote": "\u201CUna obra maestra de elegancia digital.\u201D",
     "hero.attribution": "Vogue Weddings",
 
@@ -248,9 +346,9 @@ const translations: Record<Locale, Record<string, string>> = {
     "features.sub":
       "Combinamos est\u00E9tica atemporal con la comodidad del ma\u00F1ana.",
     "features.hostLabel": "El Anfitri\u00F3n Invisible",
-    "features.aiTitle": "Conserje IA",
+    "features.aiTitle": "Asistente IA",
     "features.aiBody":
-      "Una IA personalizada entrenada con los detalles de tu boda. Ya sea que los invitados necesiten indicaciones, consejos de vestimenta o enlaces al registro de regalos, tu conserje responde al instante con la calidez de un asistente humano.",
+      "Una IA personalizada entrenada con los detalles de tu boda. Ya sea que los invitados necesiten indicaciones, consejos de vestimenta o enlaces al registro de regalos, tu asistente responde al instante con un tono cercano y humano.",
     "features.aiLink": "Descubre la magia \u2192",
     "features.designTitle": "Diseño a Medida",
     "features.designBody":
@@ -297,7 +395,7 @@ const translations: Record<Locale, Record<string, string>> = {
       "\u00A9 2025, The Ethereal Concierge. Creado para la Herencia Moderna.",
     "footer.privacy": "Privacidad",
     "footer.terms": "T\u00E9rminos",
-    "footer.concierge": "Acceso Conserje",
+    "footer.concierge": "Acceso Asistente",
     "footer.press": "Prensa",
 
     // Order form
@@ -314,15 +412,38 @@ const translations: Record<Locale, Record<string, string>> = {
     "order.step6": "\u00BFQu\u00E9 os gustar\u00EDa?",
     "order.featureHint":
       "Las experiencias seleccionadas formar\u00E1n parte de vuestra herencia digital a medida.",
-    "order.step7": "\u00BFInvitaciones f\u00EDsicas?",
+    "order.step7": "\u00BFC\u00F3mo debe sentirse la web?",
+    "order.vibeQuestion": "\u00BFCu\u00E1l es la vibra general?",
+    "order.paletteQuestion": "\u00BFPreferencias de color o ideas de paleta?",
+    "order.typographyQuestion": "Tipograf\u00EDa",
+    "order.customSelection": "Escribir otra selecci\u00F3n",
+    "order.customVibePlaceholder": "Otra idea, por ejemplo cena art d\u00E9co",
+    "order.customPalettePlaceholder":
+      "Otra paleta, por ejemplo crema, berenjena, oliva",
+    "order.typographyGuide":
+      "Una combinaci\u00F3n habitual es usar una script para los nombres con una serif para los textos, o Cinzel para elementos estructurales como fechas y lugar junto con Cormorant para la prosa.",
+    "order.typographyLimit": "Selecciona de 1 a 3 opciones.",
+    "order.decideTypography": "Decide por m\u00ED",
+    "order.primaryTypography": "Principal",
+    "order.secondaryTypography": "Secundaria",
+    "order.textTypography": "Textos",
     "order.yesPlease": "S\u00ED, por favor",
     "order.digitalOnly": "Solo digital",
-    "order.step8": "Describid vuestra est\u00E9tica.",
-    "order.aestheticLabel": "Nota est\u00E9tica",
-    "order.step9": "Vuestro email.",
+    "order.step8": "\u00BFA\u00F1adir im\u00E1genes de inspiraci\u00F3n?",
+    "order.imagesLabel": "Subir im\u00E1genes",
+    "order.imagesHint":
+      "Opcional. A\u00F1adid hasta 6 im\u00E1genes con referencias, mood, espacios, papeler\u00EDa o inspiraci\u00F3n visual.",
+    "order.removeImage": "Quitar",
+    "order.images": "Im\u00E1genes",
+    "order.step9": "\u00BFInvitaciones f\u00EDsicas?",
+    "order.paperInvitationHint":
+      "Si quer\u00E9is invitaciones en papel, nos pondremos en contacto para recoger todos los detalles necesarios.",
+    "order.digitalInvitationHint":
+      "Si prefer\u00EDs solo digital, seguiremos con los detalles de la web y no necesitaremos informaci\u00F3n para invitaciones en papel.",
+    "order.step10": "Vuestro email.",
     "order.emailLabel": "Direcci\u00F3n de email",
     "order.emailHint": "Nos pondremos en contacto en 24 horas.",
-    "order.step10": "Revisar y enviar",
+    "order.step11": "Revisar y enviar",
     "order.names": "Nombres",
     "order.weddingDate": "Fecha de la boda",
     "order.ceremonyVenue": "Lugar de la ceremonia",
@@ -330,7 +451,9 @@ const translations: Record<Locale, Record<string, string>> = {
     "order.guestCount": "N\u00FAmero de invitados",
     "order.selectedFeatures": "Caracter\u00EDsticas seleccionadas",
     "order.physicalInvitations": "Invitaciones f\u00EDsicas",
-    "order.aesthetic": "Est\u00E9tica",
+    "order.overallVibe": "Vibra general",
+    "order.colorPalette": "Paleta de color",
+    "order.typography": "Tipograf\u00EDa",
     "order.email": "Email",
     "order.notProvided": "No proporcionado",
     "order.noneSelected": "Ninguna seleccionada",
@@ -338,11 +461,62 @@ const translations: Record<Locale, Record<string, string>> = {
     "order.back": "Atr\u00E1s",
     "order.continue": "Continuar",
     "order.send": "Enviar Mi Solicitud",
+    "order.saving": "Guardando...",
+    "order.saveError":
+      "No hemos podido guardar tu solicitud. Int\u00E9ntalo de nuevo.",
     "order.received": "Recibido",
     "order.confirmTitle": "Estaremos en contacto pronto.",
     "order.confirmBody":
       "Tu solicitud est\u00E1 con nuestro equipo. Espera noticias nuestras en 24 horas.",
     "order.close": "Cerrar",
+
+    // Invisible Host page
+    "invisible.hero.eyebrow": "THE INVISIBLE HOST",
+    "invisible.hero.title": "Prueba tu chatbot de boda.",
+    "invisible.hero.body":
+      "Comparte los detalles que m\u00E1s preguntan tus invitados. La vista previa crea una voz de asistente a partir del briefing de vuestra boda.",
+    "invisible.form.title": "Briefing de boda",
+    "invisible.form.partnerOne": "Pareja 1",
+    "invisible.form.partnerTwo": "Pareja 2",
+    "invisible.form.email": "Email",
+    "invisible.form.date": "Fecha de la boda",
+    "invisible.form.ceremony": "Lugar de la ceremonia",
+    "invisible.form.reception": "Lugar de la celebraci\u00F3n",
+    "invisible.form.dress": "C\u00F3digo de vestimenta",
+    "invisible.form.arrival": "Nota de llegada",
+    "invisible.form.tone": "Tono",
+    "invisible.form.notes": "Detalles extra",
+    "invisible.form.required":
+      "Nombres, email, fecha y ceremonia son obligatorios para empezar.",
+    "invisible.form.generate": "Generar chatbot",
+    "invisible.form.update": "Actualizar chatbot",
+    "invisible.form.saving": "Guardando...",
+    "invisible.form.saveError":
+      "No hemos podido guardar tus datos. Int\u00E9ntalo de nuevo.",
+    "invisible.form.partnerOnePlaceholder": "Sara",
+    "invisible.form.partnerTwoPlaceholder": "James",
+    "invisible.form.emailPlaceholder": "tu@email.com",
+    "invisible.form.ceremonyPlaceholder": "Santa Maria del Mar",
+    "invisible.form.receptionPlaceholder": "Mas Torroella",
+    "invisible.form.dressPlaceholder": "C\u00F3ctel de verano, lino para la bienvenida",
+    "invisible.form.arrivalPlaceholder": "Lanzadera desde el hotel a las 17:15",
+    "invisible.form.tonePlaceholder": "C\u00E1lido, elegante, conciso",
+    "invisible.form.notesPlaceholder":
+      "Ni\u00F1os bienvenidos, ceremonia en el jard\u00EDn, churros de madrugada...",
+    "invisible.chat.title": "Chatbot en vivo",
+    "invisible.chat.ready": "Vista previa del asistente",
+    "invisible.chat.empty": "Tu host generado aparecer\u00E1 aqu\u00ED.",
+    "invisible.chat.placeholder": "Pregunta algo como invitado...",
+    "invisible.chat.send": "Enviar pregunta",
+    "invisible.quick.dress": "\u00BFQu\u00E9 me pongo?",
+    "invisible.quick.where": "\u00BFD\u00F3nde es la ceremonia?",
+    "invisible.quick.transport": "\u00BFC\u00F3mo llego?",
+    "invisible.fallback.names": "la pareja",
+    "invisible.fallback.date": "la fecha de la boda",
+    "invisible.fallback.reception": "el lugar de la celebraci\u00F3n",
+    "invisible.fallback.dress": "vestimenta elegante de boda",
+    "invisible.fallback.arrival":
+      "Te recomiendo revisar la web de la boda para los detalles finales de transporte.",
 
     // Product page — showcase
     "product.hero.eyebrow": "EL PRODUCTO",
@@ -351,6 +525,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "product.hero.sub":
       "Cada p\u00E1gina que vivir\u00E1n tus invitados \u2014 renderizada en directo, aqu\u00ED mismo. Haz clic, desplázate y explora la demo como si fuera tuya.",
     "product.hero.primary": "Comienza Tu Historia",
+    "product.hero.tryAi": "Prueba tu IA",
     "product.hero.secondary": "Abrir demo completa",
     "product.hero.hint": "Pru\u00E9balo \u2014 la demo de abajo es completamente interactiva.",
 
@@ -381,7 +556,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "product.aloja.eyebrow": "ALOJAMIENTO",
     "product.aloja.title": "Hoteles seleccionados, compartidos con mimo.",
     "product.aloja.body":
-      "Cuida a tus invitados con una lista de alojamientos escogidos \u2014 con vuestro c\u00F3digo de descuento destacado para que reserven al instante. Tu conserje IA tambi\u00E9n responder\u00E1 preguntas de alojamiento en el chat.",
+      "Cuida a tus invitados con una lista de alojamientos escogidos \u2014 con vuestro c\u00F3digo de descuento destacado para que reserven al instante. Tu asistente IA tambi\u00E9n responder\u00E1 preguntas de alojamiento en el chat.",
     "product.aloja.link": "Ver los alojamientos \u2197",
 
     "product.closing.title1": "\u00BFListos para crear",

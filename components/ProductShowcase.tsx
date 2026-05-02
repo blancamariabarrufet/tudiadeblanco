@@ -20,7 +20,7 @@ type FeatureSection = {
 const sections: FeatureSection[] = [
   {
     id: "nosotros",
-    route: "/nosotros",
+    route: "#nosotros",
     eyebrowKey: "product.nosotros.eyebrow",
     titleKey: "product.nosotros.title",
     bodyKey: "product.nosotros.body",
@@ -30,7 +30,7 @@ const sections: FeatureSection[] = [
   },
   {
     id: "el-gran-dia",
-    route: "/el-gran-dia",
+    route: "#el-gran-dia",
     eyebrowKey: "product.granDia.eyebrow",
     titleKey: "product.granDia.title",
     bodyKey: "product.granDia.body",
@@ -40,7 +40,7 @@ const sections: FeatureSection[] = [
   },
   {
     id: "rsvp",
-    route: "/rsvp",
+    route: "#rsvp",
     eyebrowKey: "product.rsvp.eyebrow",
     titleKey: "product.rsvp.title",
     bodyKey: "product.rsvp.body",
@@ -50,7 +50,7 @@ const sections: FeatureSection[] = [
   },
   {
     id: "alojamiento",
-    route: "/alojamiento",
+    route: "#alojamiento",
     eyebrowKey: "product.aloja.eyebrow",
     titleKey: "product.aloja.title",
     bodyKey: "product.aloja.body",
@@ -67,7 +67,7 @@ type BrowserFrameProps = {
 };
 
 function BrowserFrame({ route, title, className }: BrowserFrameProps) {
-  const displayUrl = `${DEMO_DISPLAY_HOST}${route === "/" ? "" : route}`;
+  const displayUrl = `${DEMO_DISPLAY_HOST}${route === "#" ? "" : route}`;
   const src = `${DEMO_ORIGIN}${route}`;
 
   return (
@@ -130,7 +130,7 @@ export function ProductShowcase({ onOpenOrder }: ProductShowcaseProps) {
       <section
         id="product-hero"
         className="product-hero"
-        aria-label="tu dia de blanco product hero"
+        aria-label="Tu dia de blanco product hero"
       >
         <div className="product-hero__inner">
           <p className="eyebrow product-hero__eyebrow">
@@ -145,10 +145,13 @@ export function ProductShowcase({ onOpenOrder }: ProductShowcaseProps) {
           <div className="product-hero__actions">
             <Button
               onClick={onOpenOrder}
-              className="px-6 py-3 text-[0.9rem]"
+              className="whitespace-nowrap px-6 py-3 text-[0.8rem]"
             >
               <span>{t("product.hero.primary")}</span>
             </Button>
+            <a href="/invisible-host" className="product-hero__secondary whitespace-nowrap">
+              {t("product.hero.tryAi")}
+            </a>
             <a
               href={DEMO_ORIGIN}
               target="_blank"
@@ -178,8 +181,8 @@ export function ProductShowcase({ onOpenOrder }: ProductShowcaseProps) {
 
         <div className="product-hero__stage">
           <BrowserFrame
-            route="/"
-            title="tu dia de blanco — live demo home"
+            route="#"
+            title="Tu dia de blanco — live demo home"
             className="product-hero__frame"
           />
         </div>
@@ -237,7 +240,7 @@ export function ProductShowcase({ onOpenOrder }: ProductShowcaseProps) {
               <div className="product-feature__stage">
                 <BrowserFrame
                   route={section.route}
-                  title={`tu dia de blanco — ${section.id} preview`}
+                  title={`Tu dia de blanco — ${section.id} preview`}
                 />
               </div>
             </article>

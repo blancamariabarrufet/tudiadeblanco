@@ -10,6 +10,8 @@ export function Process() {
   const dotRef = useRef<SVGCircleElement>(null);
 
   const [activeStep, setActiveStep] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,47 +49,74 @@ export function Process() {
     setTimeout(handleScroll, 100);
 
     return () => window.removeEventListener("scroll", handleScroll);
+  }, [isMobile, isTablet]);
+
+  useEffect(() => {
+    const mobileQuery = window.matchMedia("(max-width: 639px)");
+    const tabletQuery = window.matchMedia("(min-width: 640px) and (max-width: 1023px)");
+    const handleMediaChange = () => {
+      setIsMobile(mobileQuery.matches);
+      setIsTablet(tabletQuery.matches);
+    };
+
+    handleMediaChange();
+    mobileQuery.addEventListener("change", handleMediaChange);
+    tabletQuery.addEventListener("change", handleMediaChange);
+
+    return () => {
+      mobileQuery.removeEventListener("change", handleMediaChange);
+      tabletQuery.removeEventListener("change", handleMediaChange);
+    };
   }, []);
 
   const steps = [
-    { num: 1, x: 100, y: 10, titleKey: "process.step1.title", fallbackTitle: "Brief & vision", bodyKey: "process.step1.body", fallbackBody: "Style, must-haves & event details" },
-    { num: 2, x: 300, y: 90, titleKey: "process.step2.title", fallbackTitle: "Design & content", bodyKey: "process.step2.body", fallbackBody: "Palette, fonts, photos & copy" },
-    { num: 3, x: 500, y: 10, titleKey: "process.step3.title", fallbackTitle: "First draft", bodyKey: "process.step3.body", fallbackBody: "Homepage & key sections for review" },
-    { num: 4, x: 700, y: 90, titleKey: "process.step4.title", fallbackTitle: "Revisions & RSVP", bodyKey: "process.step4.body", fallbackBody: "Feedback, polish & guest form setup" },
-    { num: 5, x: 900, y: 10, titleKey: "process.step5.title", fallbackTitle: "Launch", bodyKey: "process.step5.body", fallbackBody: "Go live, share & ongoing updates" },
+    { num: 1, desktopX: 100, desktopY: 10, mobileX: 110, mobileY: 40, titleKey: "process.step1.title", fallbackTitle: "Brief & vision", bodyKey: "process.step1.body", fallbackBody: "Style, must-haves & event details" },
+    { num: 2, desktopX: 300, desktopY: 90, mobileX: 110, mobileY: 160, titleKey: "process.step2.title", fallbackTitle: "Design & content", bodyKey: "process.step2.body", fallbackBody: "Palette, fonts, photos & copy" },
+    { num: 3, desktopX: 500, desktopY: 10, mobileX: 110, mobileY: 280, titleKey: "process.step3.title", fallbackTitle: "First draft", bodyKey: "process.step3.body", fallbackBody: "Homepage & key sections for review" },
+    { num: 4, desktopX: 700, desktopY: 90, mobileX: 110, mobileY: 400, titleKey: "process.step4.title", fallbackTitle: "Revisions & RSVP", bodyKey: "process.step4.body", fallbackBody: "Feedback, polish & guest form setup" },
+    { num: 5, desktopX: 900, desktopY: 10, mobileX: 110, mobileY: 520, titleKey: "process.step5.title", fallbackTitle: "Launch", bodyKey: "process.step5.body", fallbackBody: "Go live, share & ongoing updates" },
   ];
 
-  return (
-    <section id="process" ref={sectionRef} className="relative h-[200vh] bg-[color:var(--surface)]">
-      <div className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden pt-12 pb-16">
+  const viewBox = isMobile ? "0 0 220 560" : "0 0 1000 100";
+  const pathD = isMobile
+    ? "M 110 40 Q 158 100 110 160 T 110 280 T 110 400 T 110 520"
+    : "M 0 50 Q 100 10 200 50 T 400 50 T 600 50 T 800 50 T 1000 50";
+  const stepDotRadius = isMobile ? 4 : 6;
+  const travelerDotRadius = isMobile ? 6 : 10;
+  const travelerStrokeWidth = isMobile ? 2.5 : 4;
+  const pathStrokeWidth = isMobile ? 2 : 3;
 
-        <div className="mx-auto w-full max-w-7xl px-8 sm:px-12 lg:px-20 mb-20 text-center">
+  return (
+    <section id="process" ref={sectionRef} className="relative h-[230vh] bg-[color:var(--surface)] sm:h-[200vh]">
+      <div className="sticky top-0 flex h-screen w-full flex-col justify-center overflow-hidden px-0 pb-8 pt-16 sm:pt-10 sm:pb-10 lg:pt-12 lg:pb-16">
+
+        <div className="mx-auto mb-8 w-full max-w-7xl px-8 text-center sm:mb-14 sm:px-12 lg:mb-20 lg:px-20">
           <h2 className="font-[family-name:var(--font-newsreader)] text-[clamp(1.8rem,3.6vw,2.5rem)] tracking-[-0.01em] text-[color:var(--on-surface)]">
             {t("process.heading") === "process.heading" ? "The Process" : t("process.heading")}
           </h2>
         </div>
 
-        <div className="relative w-full max-w-5xl mx-auto px-4 mt-10">
+        <div className="relative mx-auto mt-0 w-full max-w-md px-6 sm:mt-6 sm:max-w-3xl sm:px-8 lg:mt-10 lg:max-w-5xl lg:px-4">
           {/* SVG Wave Container */}
-          <div className="relative w-[200vw] -ml-[50vw] sm:w-full sm:ml-0 h-[100px] mb-8">
+          <div className="relative h-[calc(100vh-13rem)] max-h-[560px] w-full sm:mb-6 sm:h-[80px] sm:max-h-none sm:w-full lg:mb-8 lg:h-[100px]">
             <svg
-              viewBox="0 0 1000 100"
+              viewBox={viewBox}
               preserveAspectRatio="none"
               className="w-full h-full overflow-visible"
             >
               {/* Background faded path */}
               <path
-                d="M 0 50 Q 100 10 200 50 T 400 50 T 600 50 T 800 50 T 1000 50"
+                d={pathD}
                 fill="none"
                 stroke="rgba(204, 198, 188, 0.4)"
-                strokeWidth="3"
+                strokeWidth={pathStrokeWidth}
                 strokeDasharray="8 8"
               />
 
               {/* Invisible path for logic bounds calculation (getTotalLength) */}
               <path
                 ref={pathRef}
-                d="M 0 50 Q 100 10 200 50 T 400 50 T 600 50 T 800 50 T 1000 50"
+                d={pathD}
                 fill="none"
                 stroke="transparent"
                 strokeWidth="0"
@@ -97,9 +126,9 @@ export function Process() {
               {steps.map((step, idx) => (
                 <circle
                   key={`bg-dot-${idx}`}
-                  cx={step.x}
-                  cy={step.y}
-                  r="6"
+                  cx={isMobile ? step.mobileX : step.desktopX}
+                  cy={isMobile ? step.mobileY : step.desktopY}
+                  r={stepDotRadius}
                   fill={activeStep >= idx ? "var(--primary)" : "rgba(204, 198, 188, 0.3)"}
                   className="transition-colors duration-500"
                 />
@@ -110,40 +139,51 @@ export function Process() {
                 ref={dotRef}
                 cx="0"
                 cy="50"
-                r="10"
+                r={travelerDotRadius}
                 fill="var(--surface-container-lowest)"
                 stroke="var(--primary)"
-                strokeWidth="4"
-                className="transition-transform drop-shadow-[0px_4px_8px_rgba(26,28,26,0.15)]"
+                strokeWidth={travelerStrokeWidth}
+                className={isMobile ? "transition-transform drop-shadow-[0px_2px_5px_rgba(26,28,26,0.12)]" : "transition-transform drop-shadow-[0px_4px_8px_rgba(26,28,26,0.15)]"}
               />
             </svg>
           </div>
 
           {/* Text Labels */}
           <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-            <div className="relative w-[200vw] -ml-[50vw] sm:w-full sm:ml-0 h-full">
+            <div className="relative h-full w-full">
               {steps.map((step, idx) => {
                 const isActive = activeStep === idx;
                 const isPast = activeStep > idx;
-
-                // Adjust text label vertical placement
-                const topVal = step.y === 10 ? '-85px' : '160px';
+                const isMobileLabelLeft = idx % 2 === 1;
+                const topVal = isMobile
+                  ? `${(step.mobileY / 560) * 100}%`
+                  : step.desktopY === 10
+                    ? isTablet ? "-82px" : "-110px"
+                    : isTablet ? "138px" : "185px";
+                const labelStyle = isMobile
+                  ? isMobileLabelLeft
+                    ? { right: "calc(50% + 2.75rem)", top: topVal }
+                    : { left: "calc(50% + 2.75rem)", top: topVal }
+                  : { left: `${(step.desktopX / 1000) * 100}%`, top: topVal };
+                const mobileAlignment = isMobileLabelLeft
+                  ? "items-end text-right"
+                  : "items-start text-left";
 
                 return (
                   <div
                     key={`label-${idx}`}
-                    className={`absolute w-32 md:w-48 transform -translate-x-1/2 flex flex-col items-center text-center transition-all duration-700 pointer-events-auto ${isActive
+                    className={`absolute flex w-[calc(50%-3.25rem)] max-w-[9.5rem] -translate-y-1/2 flex-col transition-all duration-700 pointer-events-auto sm:w-28 sm:max-w-none sm:-translate-x-1/2 sm:translate-y-0 sm:items-center sm:text-center md:w-36 lg:w-48 ${mobileAlignment} ${isActive
                         ? "opacity-100 scale-105"
                         : isPast
                           ? "opacity-50 scale-100"
                           : "opacity-30 scale-95"
                       }`}
-                    style={{ left: `${(step.x / 1000) * 100}%`, top: topVal }}
+                    style={labelStyle}
                   >
-                    <h3 className="font-[family-name:var(--font-sans)] text-[1.1rem] md:text-[1.2rem] font-medium text-[color:var(--on-surface)] leading-tight mb-1">
+                    <h3 className="font-[family-name:var(--font-sans)] text-[0.95rem] sm:text-[0.95rem] md:text-[1rem] lg:text-[1.2rem] font-medium text-[color:var(--on-surface)] leading-tight mb-1">
                       {t(step.titleKey) === step.titleKey ? step.fallbackTitle : t(step.titleKey)}
                     </h3>
-                    <p className="font-[family-name:var(--font-sans)] text-[0.85rem] text-[color:var(--on-surface)] opacity-80 leading-snug hidden sm:block">
+                    <p className="font-[family-name:var(--font-sans)] text-[0.68rem] sm:text-[0.75rem] md:text-[0.8rem] lg:text-[0.85rem] text-[color:var(--on-surface)] opacity-70 leading-snug">
                       {t(step.bodyKey) === step.bodyKey ? step.fallbackBody : t(step.bodyKey)}
                     </p>
                   </div>

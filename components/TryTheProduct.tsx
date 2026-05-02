@@ -51,10 +51,10 @@ function buildReply(message: string, form: DemoFormState) {
   }
 
   if (lowerMessage.includes("story") || lowerMessage.includes("met") || lowerMessage.includes("fun fact")) {
-    return `One lovely detail I can share is this: ${form.funFact || "their story is filled with thoughtful little moments"}. It gives the concierge a more personal, human warmth.`;
+    return `One lovely detail I can share is this: ${form.funFact || "their story is filled with thoughtful little moments"}. It gives the assistant a more personal, human warmth.`;
   }
 
-  return `Absolutely. I would answer that in a concise, polished tone and keep the guidance aligned with ${form.partnerOne || "Partner One"} and ${form.partnerTwo || "Partner Two"}'s day. This shell is local for now, but the final concierge can respond in real time.`;
+  return `Absolutely. I would answer that in a concise, polished tone and keep the guidance aligned with ${form.partnerOne || "Partner One"} and ${form.partnerTwo || "Partner Two"}'s day. This shell is local for now, but the final assistant can respond in real time.`;
 }
 
 export function TryTheProduct({ onOpenOrder }: { onOpenOrder: () => void }) {
@@ -120,7 +120,7 @@ export function TryTheProduct({ onOpenOrder }: { onOpenOrder: () => void }) {
             See it come alive in seconds.
           </h2>
           <p className="mt-4 font-[family:var(--font-serif)] text-base leading-8 text-[rgba(26,28,26,0.7)]">
-            Tell us a little about your day. We&apos;ll build your concierge on the spot.
+            Tell us a little about your day. We&apos;ll build your assistant on the spot.
           </p>
         </div>
 
@@ -194,7 +194,7 @@ export function TryTheProduct({ onOpenOrder }: { onOpenOrder: () => void }) {
 
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Button type="submit" className="px-8 py-3 disabled:cursor-not-allowed disabled:opacity-50" fullWidth disabled={!canSubmit}>
-              <span>Build My Concierge</span>
+              <span>Build My Assistant</span>
               <ArrowRightIcon className="h-4 w-4" />
             </Button>
           </div>
@@ -215,7 +215,7 @@ export function TryTheProduct({ onOpenOrder }: { onOpenOrder: () => void }) {
               <div className="flex min-h-[460px] flex-col items-center justify-center gap-5 text-center">
                 <SpinnerIcon className="h-8 w-8 text-[color:var(--primary)]" />
                 <p className="font-[family:var(--font-serif)] text-3xl italic text-[color:var(--on-surface)]">
-                  Your concierge is waking up...
+                  Your assistant is waking up...
                 </p>
               </div>
             ) : (
@@ -223,7 +223,7 @@ export function TryTheProduct({ onOpenOrder }: { onOpenOrder: () => void }) {
                 <div className="mx-auto max-w-2xl text-center">
                   <p className="eyebrow">Interactive shell</p>
                   <h3 className="mt-3 font-[family:var(--font-serif)] text-3xl text-[color:var(--on-surface)]">
-                    Your concierge is live.
+                    Your assistant is live.
                   </h3>
                 </div>
 
@@ -261,7 +261,7 @@ export function TryTheProduct({ onOpenOrder }: { onOpenOrder: () => void }) {
 
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <p className="font-[family:var(--font-sans)] text-sm text-[rgba(26,28,26,0.55)]">
-                    This is an interactive shell for the promo phase. The production concierge
+                    This is an interactive shell for the promo phase. The production assistant
                     will stream live answers.
                   </p>
                   <Button

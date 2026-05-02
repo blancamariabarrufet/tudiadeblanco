@@ -4,7 +4,7 @@ CLAUDE.md
 AGENTS.md
 .gitignore
 
-
+.env.local
 # dependencies
 /node_modules
 /.pnp

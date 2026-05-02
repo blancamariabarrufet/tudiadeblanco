@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 import { useLanguage } from "@/lib/i18n";
 import {
@@ -31,7 +32,7 @@ export function Features() {
 
         {/* Bento grid */}
         <div className="mt-10 grid gap-4 lg:grid-cols-12">
-          {/* Row 1 — AI Concierge (wider) + Bespoke Design (narrower) */}
+          {/* Row 1 — AI Assistant (wider) + Bespoke Design (narrower) */}
           <article
             id="invisible-host"
             className="feature-card overflow-hidden lg:col-span-7"
@@ -48,9 +49,12 @@ export function Features() {
                 <p className="mt-2 font-[family-name:var(--font-newsreader)] text-[0.88rem] leading-[1.7] text-[color:var(--on-surface)]">
                   {t("features.aiBody")}
                 </p>
-                <a href="#experience" className="tertiary-link mt-4 inline-block text-[0.88rem]">
+                <Link
+                  href="/invisible-host"
+                  className="tertiary-link mt-4 inline-block text-[0.88rem]"
+                >
                   {t("features.aiLink")}
-                </a>
+                </Link>
               </div>
 
               {/* Decorative chat mockup */}

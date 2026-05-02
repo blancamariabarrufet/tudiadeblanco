@@ -15,7 +15,7 @@ const steps = [
     description:
       "The first thing guests see is your names, your date, and a live countdown ticking toward the big day — editorial design tailored to your story.",
     detail:
-      "Your AI concierge is embedded right here so guests can ask anything the moment they arrive.",
+      "Your AI assistant is embedded right here so guests can ask anything the moment they arrive.",
     accentColor: "#c4a882",
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
@@ -79,7 +79,7 @@ const steps = [
     description:
       "Take care of your guests by listing curated accommodation options — with your group discount code front and centre so booking is instant.",
     detail:
-      "Your AI concierge can also answer accommodation questions directly in the chat.",
+      "Your AI assistant can also answer accommodation questions directly in the chat.",
     accentColor: "#5e4c3c",
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
@@ -130,7 +130,7 @@ export function ScrollytellingDemo() {
           <em>crafted to perfection.</em>
         </h2>
         <p className="scrolly-subheading">
-          From the first save-the-date to post-wedding memories — tu dia de blanco handles every detail of your digital presence.
+          From the first save-the-date to post-wedding memories — Tu dia de blanco handles every detail of your digital presence.
         </p>
       </div>
 
