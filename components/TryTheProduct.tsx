@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { VellumOverlay } from "@/components/ui/VellumOverlay";
 import { ArrowRightIcon, SendIcon, SpinnerIcon } from "@/components/ui/icons";
+import { sendDemoChat, type DemoChatContext, type DemoChatMessage } from "@/lib/chat-demo";
 
 type DemoFormState = {
   partnerOne: string;
@@ -57,10 +58,33 @@ function buildReply(message: string, form: DemoFormState) {
   return `Absolutely. I would answer that in a concise, polished tone and keep the guidance aligned with ${form.partnerOne || "Partner One"} and ${form.partnerTwo || "Partner Two"}'s day. This shell is local for now, but the final assistant can respond in real time.`;
 }
 
+function buildDemoContext(form: DemoFormState): DemoChatContext {
+  return {
+    partner1_name: form.partnerOne.trim(),
+    partner2_name: form.partnerTwo.trim(),
+    contact_email: form.email.trim(),
+    wedding_date: form.date.trim(),
+    tone: form.vibe.trim() || "warm and friendly",
+    ceremony_venue: form.venue.trim(),
+    reception_venue: "",
+    dress_code: "",
+    arrival_note: "",
+    extra_details: form.funFact.trim(),
+  };
+}
+
+function toDemoHistory(messages: Message[]): DemoChatMessage[] {
+  return messages.map((message) => ({
+    role: message.role,
+    content: message.content,
+  }));
+}
+
 export function TryTheProduct({ onOpenOrder }: { onOpenOrder: () => void }) {
   const [form, setForm] = useState<DemoFormState>(initialForm);
   const [overlayOpen, setOverlayOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isChatLoading, setIsChatLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [draftMessage, setDraftMessage] = useState("");
 
@@ -97,19 +121,48 @@ export function TryTheProduct({ onOpenOrder }: { onOpenOrder: () => void }) {
     setDraftMessage("");
   }
 
-  function handleSendMessage(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSendMessage(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!draftMessage.trim()) {
+    if (!draftMessage.trim() || isChatLoading) {
       return;
     }
 
     const nextUserMessage = draftMessage.trim();
-    setMessages((current) => [
-      ...current,
+    const nextMessages: Message[] = [
+      ...messages,
       { role: "user", content: nextUserMessage },
-      { role: "assistant", content: buildReply(nextUserMessage, form) },
-    ]);
+    ];
+
+    setMessages(nextMessages);
     setDraftMessage("");
+    setIsChatLoading(true);
+
+    try {
+      const reply = await sendDemoChat({
+        message: nextUserMessage,
+        history: toDemoHistory(nextMessages),
+        demoContext: buildDemoContext(form),
+      });
+
+      setMessages((current) => [
+        ...current,
+        {
+          role: "assistant",
+          content: reply || buildReply(nextUserMessage, form),
+        },
+      ]);
+    } catch {
+      setMessages((current) => [
+        ...current,
+        {
+          role: "assistant",
+          content:
+            "I couldn't reach the assistant just now. Please try again in a moment.",
+        },
+      ]);
+    } finally {
+      setIsChatLoading(false);
+    }
   }
 
   return (
@@ -206,6 +259,7 @@ export function TryTheProduct({ onOpenOrder }: { onOpenOrder: () => void }) {
         onClose={() => {
           setOverlayOpen(false);
           setIsLoading(false);
+          setIsChatLoading(false);
         }}
         panelClassName="max-w-4xl bg-transparent p-0 shadow-none"
       >
@@ -237,6 +291,12 @@ export function TryTheProduct({ onOpenOrder }: { onOpenOrder: () => void }) {
                         {message.content}
                       </div>
                     ))}
+                    {isChatLoading && (
+                      <div className="chat-bubble bot inline-flex items-center gap-2">
+                        <SpinnerIcon className="h-4 w-4" />
+                        <span>Thinking...</span>
+                      </div>
+                    )}
                   </div>
 
                   <form
@@ -247,14 +307,17 @@ export function TryTheProduct({ onOpenOrder }: { onOpenOrder: () => void }) {
                       className="min-w-0 flex-1 border-none bg-transparent font-[family:var(--font-serif)] text-base text-[color:var(--on-surface)] outline-none"
                       placeholder="Ask me anything..."
                       value={draftMessage}
+                      maxLength={4000}
+                      disabled={isChatLoading}
                       onChange={(event) => setDraftMessage(event.target.value)}
                     />
                     <button
                       type="submit"
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[color:var(--primary)] transition-opacity hover:opacity-70"
+                      disabled={isChatLoading || !draftMessage.trim()}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[color:var(--primary)] transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-40"
                       aria-label="Send message"
                     >
-                      <SendIcon className="h-4 w-4" />
+                      {isChatLoading ? <SpinnerIcon className="h-4 w-4" /> : <SendIcon className="h-4 w-4" />}
                     </button>
                   </form>
                 </div>

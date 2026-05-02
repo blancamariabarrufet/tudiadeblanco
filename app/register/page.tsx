@@ -7,6 +7,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ALL_FEATURES, FEATURE_LABELS, type Feature } from "@/lib/features";
 import { useLanguage } from "@/lib/i18n";
+import { buildSiteUrl } from "@/lib/site-url";
 import { Check, Eye, EyeOff } from "lucide-react";
 
 export default function RegisterPage() {
@@ -70,7 +71,7 @@ export default function RegisterPage() {
     const { error: googleError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?mode=register&lang=${locale}`,
+        redirectTo: buildSiteUrl(`/auth/callback?mode=register&lang=${locale}`),
       },
     });
     if (googleError) {

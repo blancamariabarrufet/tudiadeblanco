@@ -8,7 +8,8 @@ import { MobileNavLinks, Nav } from "@/components/Nav";
 import { OrderForm } from "@/components/OrderForm";
 import { Button } from "@/components/ui/Button";
 import { VellumOverlay } from "@/components/ui/VellumOverlay";
-import { CheckIcon, SendIcon, SparklesIcon } from "@/components/ui/icons";
+import { CheckIcon, SendIcon, SparklesIcon, SpinnerIcon } from "@/components/ui/icons";
+import { sendDemoChat, type DemoChatContext, type DemoChatMessage } from "@/lib/chat-demo";
 import { useLanguage, type Locale } from "@/lib/i18n";
 
 type HostBrief = {
@@ -186,6 +187,28 @@ function buildAnswer(
     : `I can help with ${names}'s wedding: ceremony at ${brief.ceremonyVenue}, reception at ${reception}, date ${date}, and dress code ${dress}.`;
 }
 
+function buildDemoContext(brief: HostBrief): DemoChatContext {
+  return {
+    partner1_name: brief.partnerOne.trim(),
+    partner2_name: brief.partnerTwo.trim(),
+    contact_email: brief.email.trim(),
+    wedding_date: brief.weddingDate.trim(),
+    tone: brief.tone.trim() || "warm and friendly",
+    ceremony_venue: brief.ceremonyVenue.trim(),
+    reception_venue: brief.receptionVenue.trim(),
+    dress_code: brief.dressCode.trim(),
+    arrival_note: brief.arrivalNote.trim(),
+    extra_details: brief.extraNotes.trim(),
+  };
+}
+
+function toDemoHistory(messages: ChatMessage[]): DemoChatMessage[] {
+  return messages.map((message) => ({
+    role: message.role === "guest" ? "user" : "assistant",
+    content: message.text,
+  }));
+}
+
 export function InvisibleHostPage() {
   const { locale, t } = useLanguage();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -198,6 +221,7 @@ export function InvisibleHostPage() {
   const [chatInput, setChatInput] = useState("");
   const [generated, setGenerated] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isChatLoading, setIsChatLoading] = useState(false);
   const [saveError, setSaveError] = useState("");
   const hasHydrated = useSyncExternalStore(
     subscribeHydration,
@@ -227,8 +251,8 @@ export function InvisibleHostPage() {
       brief.ceremonyVenue.trim(),
   );
   const generationDisabled = hasHydrated ? !canGenerate || isSaving : false;
-  const chatDisabled = hasHydrated ? !generated : false;
-  const sendDisabled = hasHydrated ? !generated || !chatInput.trim() : false;
+  const chatDisabled = hasHydrated ? !generated || isChatLoading : false;
+  const sendDisabled = hasHydrated ? !generated || isChatLoading || !chatInput.trim() : false;
 
   function openOrder(step = 1) {
     setMobileNavOpen(false);
@@ -292,23 +316,52 @@ export function InvisibleHostPage() {
     askQuestion(chatInput);
   }
 
-  function askQuestion(question: string) {
+  async function askQuestion(question: string) {
     const trimmedQuestion = question.trim();
 
-    if (!trimmedQuestion || !generated) {
+    if (!trimmedQuestion || !generated || isChatLoading) {
       return;
     }
 
-    setMessages((current) => [
-      ...current,
-      { id: current.length + 1, role: "guest", text: trimmedQuestion },
-      {
-        id: current.length + 2,
-        role: "host",
-        text: buildAnswer(trimmedQuestion, activeBrief, locale, t),
-      },
-    ]);
+    const nextMessages: ChatMessage[] = [
+      ...messages,
+      { id: messages.length + 1, role: "guest", text: trimmedQuestion },
+    ];
+
+    setMessages(nextMessages);
     setChatInput("");
+    setIsChatLoading(true);
+
+    try {
+      const reply = await sendDemoChat({
+        message: trimmedQuestion,
+        history: toDemoHistory(nextMessages),
+        demoContext: buildDemoContext(activeBrief),
+      });
+
+      setMessages((current) => [
+        ...current,
+        {
+          id: current.length + 1,
+          role: "host",
+          text: reply || buildAnswer(trimmedQuestion, activeBrief, locale, t),
+        },
+      ]);
+    } catch {
+      setMessages((current) => [
+        ...current,
+        {
+          id: current.length + 1,
+          role: "host",
+          text:
+            locale === "es"
+              ? "No he podido conectar con el asistente ahora mismo. Intentalo de nuevo en un momento."
+              : "I couldn't reach the assistant just now. Please try again in a moment.",
+        },
+      ]);
+    } finally {
+      setIsChatLoading(false);
+    }
   }
 
   return (
@@ -523,6 +576,12 @@ export function InvisibleHostPage() {
                   </div>
                 ))
               )}
+              {isChatLoading && (
+                <div className="chat-bubble bot inline-flex items-center gap-2">
+                  <SpinnerIcon className="h-4 w-4" />
+                  <span>{locale === "es" ? "Pensando..." : "Thinking..."}</span>
+                </div>
+              )}
             </div>
 
             <div className="mt-3 grid gap-2 sm:grid-cols-3">
@@ -546,6 +605,7 @@ export function InvisibleHostPage() {
                   value={chatInput}
                   onChange={(event) => setChatInput(event.target.value)}
                   placeholder={t("invisible.chat.placeholder")}
+                  maxLength={4000}
                   disabled={chatDisabled}
                   className="disabled:cursor-not-allowed disabled:opacity-50"
                 />
@@ -556,7 +616,7 @@ export function InvisibleHostPage() {
                 disabled={sendDisabled}
                 className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[color:var(--primary)] text-[color:var(--surface-container-lowest)] transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
               >
-                <SendIcon className="h-4 w-4" />
+                {isChatLoading ? <SpinnerIcon className="h-4 w-4" /> : <SendIcon className="h-4 w-4" />}
               </button>
             </form>
           </section>

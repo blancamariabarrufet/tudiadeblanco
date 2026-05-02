@@ -1,13 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createSession, sanitizeFeatures, setSessionCookie } from "@/lib/auth";
+import { getSiteUrl } from "@/lib/site-url";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const mode = searchParams.get("mode");
-  const next = searchParams.get("next") ?? "/manage/dashboard";
+  const next = sanitizeNextPath(searchParams.get("next"));
+  const origin = getSiteUrl();
   const lang = searchParams.get("lang") === "en" ? "en" : "es";
   const localized = (path: string) => `${origin}${path}${path.includes("?") ? "&" : "?"}lang=${lang}`;
 
@@ -63,4 +65,12 @@ export async function GET(request: Request) {
   }
 
   return NextResponse.redirect(localized("/login?error=auth_failed"));
+}
+
+function sanitizeNextPath(path: string | null) {
+  if (!path || !path.startsWith("/") || path.startsWith("//")) {
+    return "/manage/dashboard";
+  }
+
+  return path;
 }

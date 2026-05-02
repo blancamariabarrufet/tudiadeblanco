@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { login } from "@/app/actions/auth";
 import { useLanguage, type Locale } from "@/lib/i18n";
+import { buildSiteUrl } from "@/lib/site-url";
 import { createClient } from "@/lib/supabase/client";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -156,7 +157,7 @@ export default function LoginPage() {
     const { error: googleError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?lang=${locale}`,
+        redirectTo: buildSiteUrl(`/auth/callback?lang=${locale}`),
       },
     });
 
