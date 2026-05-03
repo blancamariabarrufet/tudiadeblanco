@@ -364,7 +364,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "features.couplePoint1": "Panel privado para gestionar los detalles del dia",
     "features.couplePoint2": "RSVPs, invitados, dietas y mesas en un solo lugar",
     "features.couplePoint3": "Noticias, cambios y actualizaciones publicados con calma",
-    "features.couplePoint4": "Una web disenada desde vuestra historia, no desde una plantilla",
+    "features.couplePoint4": "Una web diseñada desde vuestra historia, no desde una plantilla",
     "features.guestKicker": "Para los invitados",
     "features.guestTitle": "Una experiencia clara desde la invitacion hasta la llegada.",
     "features.guestPoint1": "Informacion de boda mobile-first y facil de consultar",

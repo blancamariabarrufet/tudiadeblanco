@@ -63,7 +63,7 @@ const services: ProductService[] = [
     },
     points: {
       en: ["Story, schedule, venues and guest guidance", "Designed to feel personal, not template based"],
-      es: ["Historia, horarios, espacios e informacion para invitados", "Disenada para sentirse personal, no como una plantilla"],
+      es: ["Historia, horarios, espacios e informacion para invitados", "Diseñada para sentirse personal, no como una plantilla"],
     },
   },
   {
@@ -79,7 +79,7 @@ const services: ProductService[] = [
     },
     body: {
       en: "Printed invitations designed to match the digital wedding experience, from first impression to RSVP.",
-      es: "Invitaciones impresas disenadas para acompanar la experiencia digital, desde la primera impresion hasta el RSVP.",
+      es: "Invitaciones impresas diseñadas para acompañar la experiencia digital, desde la primera impresion hasta el RSVP.",
     },
     points: {
       en: ["Coordinated with your website style", "Prepared for print"],
@@ -99,7 +99,7 @@ const services: ProductService[] = [
     },
     body: {
       en: "Guests confirm attendance through the site. You see every response, companion and contact detail in one place.",
-      es: "Los invitados confirman asistencia desde la web. Tu ves cada respuesta, acompanante y contacto en un solo lugar.",
+      es: "Los invitados confirman asistencia desde la web. Tu ves cada respuesta, acompañante y contacto en un solo lugar.",
     },
     points: {
       en: ["Confirmed, declined and pending guests", "Manual edits for last minute changes"],
@@ -316,7 +316,7 @@ const differencePoints = {
       body: "Informacion de invitados, cambios de RSVP, notas y actualizaciones viven en un flujo sereno.",
     },
     {
-      title: "Disenada alrededor de vuestra boda",
+      title: "Diseñada alrededor de vuestra boda",
       body: "La web parte de vuestra historia, tono y necesidades reales, no de una plantilla generica.",
     },
     {
