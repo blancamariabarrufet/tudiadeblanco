@@ -265,11 +265,8 @@ export function InvisibleHostPage() {
     };
   }, []);
 
-  function openOrder(step = 1) {
-    setMobileNavOpen(false);
-    setOrderInitialStep(step);
-    setOrderSession((current) => current + 1);
-    setOrderOpen(true);
+  function openOrder() {
+    window.location.href = "/register";
   }
 
   function updateBrief<K extends keyof HostBrief>(field: K, value: HostBrief[K]) {

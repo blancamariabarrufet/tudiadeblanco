@@ -9,8 +9,8 @@ import { Hero } from "@/components/Hero";
 import { MobileNavLinks, Nav } from "@/components/Nav";
 import { OrderForm } from "@/components/OrderForm";
 import { Process } from "@/components/Process";
+import { ProductServicesCarousel } from "@/components/ProductShowcase";
 import { ScrollFrameStory } from "@/components/ScrollFrameStory";
-import { TryTheProduct } from "@/components/TryTheProduct";
 import { VellumOverlay } from "@/components/ui/VellumOverlay";
 
 export default function Home() {
@@ -19,11 +19,8 @@ export default function Home() {
   const [orderInitialStep, setOrderInitialStep] = useState(1);
   const [orderSession, setOrderSession] = useState(0);
 
-  function openOrder(step = 1) {
-    setMobileNavOpen(false);
-    setOrderInitialStep(step);
-    setOrderSession((current) => current + 1);
-    setOrderOpen(true);
+  function openOrder() {
+    window.location.href = "/register";
   }
 
   return (
@@ -35,7 +32,7 @@ export default function Home() {
 
       <Hero onOpenOrder={() => openOrder()} />
       <Features />
-      <TryTheProduct onOpenOrder={() => openOrder()} />
+      <ProductServicesCarousel variant="home" />
       <Process />
       <ScrollFrameStory />
       <ClosingCTA onOpenOrder={() => openOrder()} />

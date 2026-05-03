@@ -49,16 +49,23 @@ export function Features() {
                 <p className="mt-2 font-[family-name:var(--font-newsreader)] text-[0.88rem] leading-[1.7] text-[color:var(--on-surface)]">
                   {t("features.aiBody")}
                 </p>
+                <div className="feature-host-cta-wrap">
                 <Link
                   href="/invisible-host"
-                  className="tertiary-link mt-4 inline-block text-[0.88rem]"
+                  className="feature-host-cta"
                 >
-                  {t("features.aiLink")}
+                  <span>{t("features.aiLink")}</span>
+                  <span className="feature-host-cta__arrow" aria-hidden="true">→</span>
                 </Link>
+                </div>
               </div>
 
               {/* Decorative chat mockup */}
-              <div className="hidden rounded-[var(--radius-lg)] bg-[color:var(--surface-container-low)] p-3 shadow-[var(--shadow-ambient)] xl:block">
+              <Link
+                href="/invisible-host"
+                className="hidden rounded-[var(--radius-lg)] bg-[color:var(--surface-container-low)] p-3 shadow-[var(--shadow-ambient)] transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[color:var(--primary)] xl:block"
+                aria-label={t("features.aiLink")}
+              >
                 <div className="flex h-full flex-col gap-2.5 rounded-[var(--radius-lg)] bg-[rgba(255,255,255,0.6)] p-3">
                   <div className="chat-bubble bot text-[0.78rem]">
                     {t("chat.greeting")}
@@ -76,7 +83,7 @@ export function Features() {
                     <SendIcon className="ml-auto h-3.5 w-3.5 text-[color:var(--primary)]" />
                   </div>
                 </div>
-              </div>
+              </Link>
             </div>
           </article>
 

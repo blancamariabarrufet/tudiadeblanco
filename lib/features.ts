@@ -6,6 +6,7 @@ export const ALL_FEATURES = [
   "chatbot",
   "news",
   "letters",
+  "domain",
 ] as const;
 
 export type Feature = (typeof ALL_FEATURES)[number];
@@ -18,4 +19,5 @@ export const FEATURE_LABELS: Record<Feature, string> = {
   chatbot: "AI Assistant Chatbot",
   news: "News & Updates Feed",
   letters: "Letters to the Couple",
+  domain: "Custom Domain & Email",
 };

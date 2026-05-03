@@ -42,7 +42,6 @@ const featureCards = [
   "News & Updates Feed",
   "Letters to the Couple",
   "Travel & Accommodation Guide",
-  "Custom Domain",
 ];
 
 const DECIDE_FOR_ME = "Decide for me";

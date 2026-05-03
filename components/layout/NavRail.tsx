@@ -13,6 +13,7 @@ import {
   Bot,
   Newspaper,
   Mail,
+  Globe2,
   ShieldCheck,
   LogOut,
 } from "lucide-react";
@@ -26,6 +27,7 @@ const featureItems: { feature: Feature; href: string; icon: React.ElementType; l
   { feature: "chatbot",  href: "/manage/chatbot",  icon: Bot,        labelKey: "concierge" },
   { feature: "news",     href: "/manage/news",     icon: Newspaper,  labelKey: "news" },
   { feature: "letters",  href: "/manage/letters",  icon: Mail,       labelKey: "letters" },
+  { feature: "domain",   href: "/manage/domain",   icon: Globe2,     labelKey: "domain" },
 ];
 
 function NavItem({ href, label, icon: Icon, active }: { href: string; label: string; icon: React.ElementType; active: boolean }) {

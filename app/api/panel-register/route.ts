@@ -19,8 +19,13 @@ export async function POST(request: Request) {
     partnerOne: String(body.partnerOne ?? ""),
     partnerTwo: String(body.partnerTwo ?? ""),
     weddingDate: String(body.weddingDate ?? ""),
+    ceremonyVenue: String(body.ceremonyVenue ?? ""),
+    receptionVenue: String(body.receptionVenue ?? ""),
+    guestCount: String(body.guestCount ?? ""),
+    physicalInvitations: body.physicalInvitations === true,
     language: String(body.language ?? "es"),
     features: Array.isArray(body.features) ? body.features.map(String) : [],
+    designAnswers: body.designAnswers,
     googleAccessToken: typeof body.googleAccessToken === "string" ? body.googleAccessToken : undefined,
   };
 

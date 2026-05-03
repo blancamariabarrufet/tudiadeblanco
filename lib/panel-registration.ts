@@ -1,6 +1,10 @@
 import bcrypt from "bcryptjs";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ALL_FEATURES, FEATURE_LABELS, sanitizeFeatures, type Feature } from "@/lib/auth";
+import {
+  normalizeRegistrationDesignAnswers,
+  type RegistrationDesignAnswers,
+} from "@/lib/register-design-questions";
 
 type ActionResult = { success: true } | { error: string };
 type Language = "en" | "es";
@@ -12,6 +16,49 @@ function languageOrDefault(language: string): Language {
 function normalizeRegistrationFeatures(features: string[]) {
   const selected = sanitizeFeatures(features);
   return selected.length > 0 ? selected : sanitizeFeatures(ALL_FEATURES);
+}
+
+function normalizeGuestCount(value?: string) {
+  const count = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(count) && count > 0 ? count : 0;
+}
+
+function visibleAnswer(value: string, otherValue: string) {
+  return value === "other" && otherValue ? otherValue : value;
+}
+
+function isMissingDesignPreferencesTable(error: { code?: string; message?: string }) {
+  return (
+    error.code === "42P01" ||
+    error.message?.includes("Could not find the table")
+  );
+}
+
+async function saveRegistrationDesignPreferences(submissionId: string, answers: RegistrationDesignAnswers) {
+  const supabase = createAdminClient();
+  const { error } = await supabase.from("solicitation_design_preferences").insert({
+    submission_id: submissionId,
+    mood: answers.mood,
+    mood_other: answers.moodOther,
+    photography_style: answers.photographyStyle,
+    photography_style_other: answers.photographyStyleOther,
+    accent_color: answers.accentColor,
+    accent_color_other: answers.accentColorOther,
+    tonal_warmth: answers.tonalWarmth,
+    tonal_warmth_other: answers.tonalWarmthOther,
+    typography_feel: answers.typographyFeel,
+    typography_feel_other: answers.typographyFeelOther,
+    section_priority: answers.sectionPriority,
+    section_priority_other: answers.sectionPriorityOther,
+    hidden_sections: answers.hiddenSections,
+    hidden_sections_other: answers.hiddenSectionsOther,
+    hero_image: answers.heroImage,
+    hero_image_other: answers.heroImageOther,
+  });
+
+  if (error && !isMissingDesignPreferencesTable(error)) {
+    throw new Error(error.message);
+  }
 }
 
 async function ensureUniqueCredentials(username: string, email: string) {
@@ -36,10 +83,17 @@ async function createRegistrationSubmission(data: {
   partnerTwo: string;
   email: string;
   weddingDate?: string;
+  ceremonyVenue?: string;
+  receptionVenue?: string;
+  guestCount?: string;
+  physicalInvitations?: boolean;
   language: Language;
   features: Feature[];
+  designAnswers?: unknown;
 }) {
   const supabase = createAdminClient();
+  const designAnswers = normalizeRegistrationDesignAnswers(data.designAnswers);
+  const designSummary = JSON.stringify(designAnswers);
   const { data: submission, error } = await supabase
     .from("solicitation_submissions")
     .insert({
@@ -48,13 +102,13 @@ async function createRegistrationSubmission(data: {
       partner_two: data.partnerTwo,
       email: data.email,
       wedding_date: data.weddingDate || null,
-      ceremony_venue: "",
-      reception_venue: "",
-      guest_count: 0,
-      physical_invitations: false,
-      invitation_style: null,
-      overall_vibe: "",
-      color_palette: "",
+      ceremony_venue: data.ceremonyVenue?.trim() ?? "",
+      reception_venue: data.receptionVenue?.trim() ?? "",
+      guest_count: normalizeGuestCount(data.guestCount),
+      physical_invitations: Boolean(data.physicalInvitations),
+      invitation_style: designSummary,
+      overall_vibe: visibleAnswer(designAnswers.mood, designAnswers.moodOther),
+      color_palette: visibleAnswer(designAnswers.accentColor, designAnswers.accentColorOther),
       locale: data.language,
     })
     .select("id")
@@ -72,6 +126,8 @@ async function createRegistrationSubmission(data: {
     if (featuresError) throw new Error(featuresError.message);
   }
 
+  await saveRegistrationDesignPreferences(submission.id, designAnswers);
+
   return submission.id as string;
 }
 
@@ -82,8 +138,13 @@ export async function registerPasswordPanelUser(data: {
   partnerOne: string;
   partnerTwo: string;
   weddingDate?: string;
+  ceremonyVenue?: string;
+  receptionVenue?: string;
+  guestCount?: string;
+  physicalInvitations?: boolean;
   language: string;
   features: string[];
+  designAnswers?: unknown;
 }): Promise<ActionResult> {
   const username = data.username.trim();
   const email = data.email.trim().toLowerCase();
@@ -106,8 +167,13 @@ export async function registerPasswordPanelUser(data: {
       partnerTwo,
       email,
       weddingDate: data.weddingDate,
+      ceremonyVenue: data.ceremonyVenue,
+      receptionVenue: data.receptionVenue,
+      guestCount: data.guestCount,
+      physicalInvitations: data.physicalInvitations,
       language,
       features,
+      designAnswers: data.designAnswers,
     });
 
     const supabase = createAdminClient();
@@ -136,8 +202,13 @@ export async function registerGooglePanelUser(data: {
   partnerOne: string;
   partnerTwo: string;
   weddingDate?: string;
+  ceremonyVenue?: string;
+  receptionVenue?: string;
+  guestCount?: string;
+  physicalInvitations?: boolean;
   language: string;
   features: string[];
+  designAnswers?: unknown;
   googleAccessToken?: string;
 }): Promise<ActionResult> {
   if (!data.googleAccessToken) return { error: "Google sign-in could not be verified." };
@@ -166,8 +237,13 @@ export async function registerGooglePanelUser(data: {
       partnerTwo,
       email,
       weddingDate: data.weddingDate,
+      ceremonyVenue: data.ceremonyVenue,
+      receptionVenue: data.receptionVenue,
+      guestCount: data.guestCount,
+      physicalInvitations: data.physicalInvitations,
       language,
       features,
+      designAnswers: data.designAnswers,
     });
 
     const supabase = createAdminClient();

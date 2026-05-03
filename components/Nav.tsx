@@ -15,6 +15,7 @@ const linkKeys = [
   { href: "/invisible-host", key: "nav.host" },
   { href: "/#process", key: "nav.process" },
   { href: "/product", key: "nav.product" },
+  { href: "/pricing", key: "nav.pricing" },
 ];
 
 export function Nav({ onOpenOrder, onOpenMobileNav }: NavProps) {

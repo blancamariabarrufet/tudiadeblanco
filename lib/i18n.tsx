@@ -76,6 +76,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.host": "Our Invisible Host",
     "nav.process": "Process",
     "nav.product": "Product",
+    "nav.pricing": "Pricing",
     "nav.login": "Login",
     "nav.cta": "Begin Your Story",
     "nav.mobileTitle": "The Digital Heirloom.",
@@ -99,10 +100,10 @@ const translations: Record<Locale, Record<string, string>> = {
     "features.sub":
       "We combine timeless aesthetics with the convenience of tomorrow.",
     "features.hostLabel": "The Invisible Host",
-    "features.aiTitle": "AI Assistant",
+    "features.aiTitle": "Personal assistant",
     "features.aiBody":
-      "A personalized AI trained on your wedding details. Whether guests need directions, dress code advice, or gift registry links, your assistant responds instantly with a warm, human tone.",
-    "features.aiLink": "Discover the magic \u2192",
+      "A personal assistant for your guests, trained on your wedding details. Whether they need directions, dress code advice, or registry links, it responds instantly with a warm, human tone.",
+    "features.aiLink": "Try your personalized assistant.",
     "features.designTitle": "Bespoke Design",
     "features.designBody":
       "Curated typography and layouts that mirror high-end stationery. No templates, just digital craft.",
@@ -322,6 +323,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.host": "The invisible host",
     "nav.process": "Proceso",
     "nav.product": "Producto",
+    "nav.pricing": "Precios",
     "nav.login": "Login",
     "nav.cta": "Comienza Tu Historia",
     "nav.mobileTitle": "La Herencia Digital.",
@@ -346,10 +348,10 @@ const translations: Record<Locale, Record<string, string>> = {
     "features.sub":
       "Combinamos est\u00E9tica atemporal con la comodidad del ma\u00F1ana.",
     "features.hostLabel": "El Anfitri\u00F3n Invisible",
-    "features.aiTitle": "Asistente IA",
+    "features.aiTitle": "Asistente Personal",
     "features.aiBody":
-      "Una IA personalizada entrenada con los detalles de tu boda. Ya sea que los invitados necesiten indicaciones, consejos de vestimenta o enlaces al registro de regalos, tu asistente responde al instante con un tono cercano y humano.",
-    "features.aiLink": "Descubre la magia \u2192",
+      "Un asistente personal para vuestros invitados, entrenado con los detalles de vuestra boda. Si necesitan indicaciones, dress code o enlaces de regalo, responde al instante con un tono cercano y humano.",
+    "features.aiLink": "Prueba tu asistente personalizado.",
     "features.designTitle": "Diseño a Medida",
     "features.designBody":
       "Tipografía y maquetación seleccionadas que reflejan papelería de alta gama. Sin plantillas, solo artesanía digital.",

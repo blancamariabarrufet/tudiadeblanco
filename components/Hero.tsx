@@ -4,7 +4,6 @@ import Image from "next/image";
 
 import { useLanguage } from "@/lib/i18n";
 import { Button } from "@/components/ui/Button";
-import { PolaroidFrame } from "@/components/ui/PolaroidFrame";
 
 type HeroProps = {
   onOpenOrder: () => void;
@@ -18,7 +17,7 @@ export function Hero({ onOpenOrder }: HeroProps) {
       id="top"
       className="hero-section bg-[color:var(--surface)] px-5 pb-16 pt-24 sm:px-8 lg:px-20 md:pb-20 md:pt-28 lg:pb-24 lg:pt-32"
     >
-      <div className="mx-auto grid max-w-7xl items-start gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-6">
+      <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-6">
         {/* Left column — editorial text */}
         <div className="hero-copy-wrap max-w-xl pt-2 lg:pt-6">
           <p className="eyebrow">{t("hero.eyebrow")}</p>
@@ -65,33 +64,23 @@ export function Hero({ onOpenOrder }: HeroProps) {
           </div>
         </div>
 
-        {/* Right column: Polaroid image */}
-        <div className="relative max-w-[31rem] justify-self-center lg:justify-self-end">
-          <PolaroidFrame className="rotate-[-1.4deg] rounded-[0.45rem] px-3 pb-9 pt-3 shadow-[0_28px_70px_rgba(76,62,50,0.16),0_2px_10px_rgba(76,62,50,0.08)] sm:px-4 sm:pb-11 sm:pt-4">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[0.2rem]">
+        {/* Right column — polaroid */}
+        <div className="flex w-full justify-center lg:justify-end">
+          <figure
+            className="relative bg-white pt-4 pr-4 pb-16 pl-4 shadow-[0_24px_60px_rgba(76,62,50,0.18)] rotate-[-3deg] transition-transform duration-500 hover:rotate-[-1deg] hover:scale-[1.02]"
+            style={{ width: "min(22rem, 100%)" }}
+          >
+            <div className="relative aspect-square w-full overflow-hidden bg-[color:var(--surface-container-low)]">
               <Image
                 src="/images/table.png"
-                alt="Elegant wedding dinner table"
+                alt="Wedding table arrangement"
                 fill
                 priority
-                className="object-cover sepia-[0.1] saturate-[0.92]"
-                sizes="(max-width: 1024px) 100vw, 42vw"
-              />
-              <div
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  background:
-                    "radial-gradient(circle at 50% 42%, rgba(250, 246, 238, 0.04) 0%, rgba(108, 91, 78, 0.08) 58%, rgba(44, 34, 27, 0.34) 100%), linear-gradient(180deg, rgba(239, 217, 200, 0.08), rgba(76, 62, 50, 0.1))",
-                }}
+                sizes="(min-width: 1024px) 22rem, 80vw"
+                className="object-cover"
               />
             </div>
-            <p className="mt-6 text-center font-[family-name:var(--font-newsreader)] text-[1.05rem] italic leading-snug text-[color:var(--on-surface)]">
-              {t("hero.quote")}
-            </p>
-            <p className="mt-2 text-center font-[family-name:var(--font-work-sans)] text-[0.62rem] uppercase tracking-[0.1em] text-[rgba(108,91,78,0.62)]">
-              {t("hero.attribution")}
-            </p>
-          </PolaroidFrame>
+          </figure>
         </div>
       </div>
     </section>

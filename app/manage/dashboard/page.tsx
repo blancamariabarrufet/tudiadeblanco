@@ -4,7 +4,7 @@ import { ModuleHeader } from "@/components/layout/ModuleHeader";
 import { useT, useUser } from "@/context/UserContext";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Users, Grid3x3, Wallet, Mail, Bot, Newspaper, Utensils } from "lucide-react";
+import { Users, Grid3x3, Wallet, Mail, Bot, Newspaper, Utensils, Globe2 } from "lucide-react";
 import type { Feature } from "@/lib/features";
 
 const modules = [
@@ -56,6 +56,13 @@ const modules = [
     icon: Mail,
     label: "Letters Inbox",
     desc: "Read messages from your guests",
+  },
+  {
+    feature: "domain",
+    href: "/manage/domain",
+    icon: Globe2,
+    label: "Custom Domain & Email",
+    desc: "Plan your wedding URL and inbox",
   },
 ] satisfies {
   feature: Feature;

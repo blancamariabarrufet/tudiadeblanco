@@ -14,11 +14,8 @@ export default function ProductPage() {
   const [orderInitialStep, setOrderInitialStep] = useState(1);
   const [orderSession, setOrderSession] = useState(0);
 
-  function openOrder(step = 1) {
-    setMobileNavOpen(false);
-    setOrderInitialStep(step);
-    setOrderSession((current) => current + 1);
-    setOrderOpen(true);
+  function openOrder() {
+    window.location.href = "/register";
   }
 
   return (
