@@ -14,6 +14,8 @@ const modules = [
     icon: Users,
     label: "Guest List & RSVP",
     desc: "Manage invitations and track responses",
+    color: "#d96b72",
+    bg: "#fdece9",
   },
   {
     feature: "seating",
@@ -21,6 +23,8 @@ const modules = [
     icon: Grid3x3,
     label: "Table Seating",
     desc: "Assign guests to tables visually",
+    color: "#70bda9",
+    bg: "#eaf5f2",
   },
   {
     feature: "dietary",
@@ -28,6 +32,8 @@ const modules = [
     icon: Utensils,
     label: "Dietary & Accessibility",
     desc: "Share requirements with caterers",
+    color: "#d9a05b",
+    bg: "#fcf6ef",
   },
   {
     feature: "budget",
@@ -35,6 +41,8 @@ const modules = [
     icon: Wallet,
     label: "Budget Tracker",
     desc: "Track spend across all categories",
+    color: "#6c5b4e",
+    bg: "#f4f3f1",
   },
   {
     feature: "chatbot",
@@ -42,6 +50,8 @@ const modules = [
     icon: Bot,
     label: "Concierge Editor",
     desc: "Control what your AI concierge knows",
+    color: "#8fa39a",
+    bg: "#f0f4f2",
   },
   {
     feature: "news",
@@ -49,6 +59,8 @@ const modules = [
     icon: Newspaper,
     label: "News Posts",
     desc: "Publish updates to your wedding site",
+    color: "#a88778",
+    bg: "#f6f1ef",
   },
   {
     feature: "letters",
@@ -56,6 +68,8 @@ const modules = [
     icon: Mail,
     label: "Letters Inbox",
     desc: "Read messages from your guests",
+    color: "#c87969",
+    bg: "#faebe8",
   },
   {
     feature: "domain",
@@ -63,6 +77,8 @@ const modules = [
     icon: Globe2,
     label: "Custom Domain & Email",
     desc: "Plan your wedding URL and inbox",
+    color: "#726b64",
+    bg: "#f4f3f1",
   },
 ] satisfies {
   feature: Feature;
@@ -70,6 +86,8 @@ const modules = [
   icon: React.ElementType;
   label: string;
   desc: string;
+  color: string;
+  bg: string;
 }[];
 
 export default function DashboardPage() {
@@ -86,32 +104,34 @@ export default function DashboardPage() {
         subtitle={t.dashboard.subtitle}
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {visibleModules.map(({ href, icon: Icon, label, desc }) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {visibleModules.map(({ href, icon: Icon, label, desc, color, bg }) => (
           <Link
             key={href}
             href={href}
-            className="group flex flex-col gap-3 p-5 rounded-2xl transition-all hover:shadow-ambient"
+            className="group flex flex-col gap-4 p-6 rounded-2xl transition-all hover:shadow-ambient hover:-translate-y-1"
             style={{
               background: "var(--surface-container-lowest)",
               boxShadow: "var(--shadow-ambient)",
             }}
           >
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ background: "var(--surface-container-low)" }}
-            >
-              <Icon size={18} strokeWidth={1} style={{ color: "var(--primary)" }} />
-            </div>
-            <div>
+            <div className="flex items-center gap-4">
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 shadow-sm"
+                style={{ background: bg }}
+              >
+                <Icon size={22} strokeWidth={2} style={{ color }} />
+              </div>
               <p
-                className="font-medium text-sm mb-0.5"
+                className="font-bold text-[16px]"
                 style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface)" }}
               >
                 {label}
               </p>
+            </div>
+            <div>
               <p
-                className="text-xs leading-relaxed"
+                className="text-sm leading-relaxed font-medium"
                 style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}
               >
                 {desc}

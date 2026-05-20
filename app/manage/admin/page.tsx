@@ -412,7 +412,7 @@ export default function AdminPage() {
       >
         {visibleUsers.length === 0 ? (
           <div className="p-12 text-center">
-            <p style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)", fontSize: "1.125rem" }}>
+            <p style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)", fontSize: "1.125rem", fontWeight: "bold" }}>
               {tab === "users" ? t.admin.noUsers : "No pending register solicitations"}
             </p>
           </div>
@@ -422,7 +422,7 @@ export default function AdminPage() {
             <thead>
               <tr style={{ background: "var(--surface-container-low)" }}>
                 {[t.admin.username, "Email", t.admin.language, t.admin.submission, t.admin.features, tab === "users" ? t.admin.active : "Status", ""].map((h) => (
-                  <th key={h} className="text-left px-4 py-3 text-xs font-medium" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>
+                  <th key={h} className="text-left px-4 py-3 text-xs font-bold uppercase tracking-wider" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>
                     {h}
                   </th>
                 ))}
@@ -434,7 +434,7 @@ export default function AdminPage() {
                   key={user.id}
                   style={{ background: i % 2 === 0 ? "var(--surface-container-lowest)" : "var(--surface-container-low)" }}
                 >
-                  <td className="px-4 py-3 font-medium" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface)" }}>
+                  <td className="px-4 py-3 font-bold" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface)" }}>
                     {user.username}
                   </td>
                   <td className="px-4 py-3" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>

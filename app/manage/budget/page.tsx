@@ -121,9 +121,9 @@ function ProgressBar({ budgeted, actual }: { budgeted: number; actual: number })
   const over = actual > budgeted && budgeted > 0;
   const pct = budgeted > 0 ? Math.min((actual / budgeted) * 100, 100) : 0;
   return (
-    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--surface-container-low)" }}>
+    <div className="h-1.5 rounded-full overflow-hidden shadow-inner" style={{ background: "var(--surface-container-low)" }}>
       <div
-        className="h-full rounded-full transition-all"
+        className="h-full rounded-full transition-all shadow-[1px_0_4px_rgba(0,0,0,0.15)]"
         style={{
           width: `${pct}%`,
           background: over
@@ -320,7 +320,7 @@ function DonutChart({
     : "var(--surface-container-low) 0% 100%";
 
   return (
-    <div className="rounded-xl p-4" style={{ background: "var(--surface-container-lowest)", boxShadow: "var(--shadow-ambient)" }}>
+    <div className="rounded-xl p-4 transition-all duration-300 hover:shadow-[0_24px_48px_rgba(26,28,26,0.16)]" style={{ background: "var(--surface-container-lowest)", boxShadow: "var(--shadow-ambient)" }}>
       <div className="flex items-center justify-between gap-4 mb-4">
         <div>
           <p className="text-sm font-medium" style={{ color: "var(--on-surface)" }}>
@@ -330,18 +330,18 @@ function DonutChart({
             {mode === "actual" ? t.showingCosts : mode === "budgeted" ? t.showingBudget : t.showingDue}
           </p>
         </div>
-        <p className="text-xl font-light tabular-nums" style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)" }}>
+        <p className="text-xl font-bold tabular-nums" style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)" }}>
           {fmt(total)}
         </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-5 items-center">
         <div
-          className="relative mx-auto h-40 w-40 rounded-full"
+          className="relative mx-auto h-40 w-40 rounded-full shadow-[inset_0_2px_8px_rgba(0,0,0,0.06),0_4px_12px_rgba(0,0,0,0.05)]"
           style={{ background: `conic-gradient(${gradient})` }}
           aria-label={t.sectionBreakdown}
         >
-          <div className="absolute inset-8 rounded-full flex items-center justify-center text-center" style={{ background: "var(--surface-container-lowest)" }}>
+          <div className="absolute inset-8 rounded-full flex items-center justify-center text-center shadow-[0_2px_8px_rgba(0,0,0,0.06)]" style={{ background: "var(--surface-container-lowest)" }}>
             <div>
               <p className="text-xs" style={{ color: "var(--on-surface-variant)" }}>
                 {t.total}
@@ -406,7 +406,7 @@ function PaymentStatusChart({ items, t }: { items: BudgetItem[]; t: BudgetText }
   const total = segments.reduce((sum, segment) => sum + segment.value, 0);
 
   return (
-    <div className="rounded-xl p-4 h-full" style={{ background: "var(--surface-container-lowest)", boxShadow: "var(--shadow-ambient)" }}>
+    <div className="rounded-xl p-4 h-full transition-all duration-300 hover:shadow-[0_24px_48px_rgba(26,28,26,0.16)]" style={{ background: "var(--surface-container-lowest)", boxShadow: "var(--shadow-ambient)" }}>
       <div className="flex items-center justify-between gap-3 mb-4">
         <div>
           <p className="text-sm font-medium" style={{ color: "var(--on-surface)" }}>
@@ -416,15 +416,16 @@ function PaymentStatusChart({ items, t }: { items: BudgetItem[]; t: BudgetText }
             {fmt(total)}
           </p>
         </div>
-        <p className="text-xl font-light tabular-nums" style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)" }}>
+        <p className="text-xl font-bold tabular-nums" style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)" }}>
           {items.length}
         </p>
       </div>
 
-      <div className="flex h-3 overflow-hidden rounded-full mb-4" style={{ background: "var(--surface-container-low)" }}>
+      <div className="flex h-3 overflow-hidden rounded-full mb-4 shadow-inner" style={{ background: "var(--surface-container-low)" }}>
         {segments.map((segment) => (
           <div
             key={segment.key}
+            className="shadow-[1px_0_4px_rgba(0,0,0,0.15)]"
             style={{
               width: total > 0 ? `${Math.max((segment.value / total) * 100, segment.value > 0 ? 4 : 0)}%` : "0%",
               background: segment.color,
@@ -476,10 +477,10 @@ function SectionBarChart({
   const max = Math.max(...rows.flatMap((row) => [row.budgeted, row.actual]), 1);
 
   return (
-    <div className="rounded-xl p-4 h-full" style={{ background: "var(--surface-container-lowest)", boxShadow: "var(--shadow-ambient)" }}>
+    <div className="rounded-xl p-4 h-full transition-all duration-300 hover:shadow-[0_24px_48px_rgba(26,28,26,0.16)]" style={{ background: "var(--surface-container-lowest)", boxShadow: "var(--shadow-ambient)" }}>
       <div className="flex items-center justify-between gap-3 mb-4">
         <div>
-          <p className="text-sm font-medium" style={{ color: "var(--on-surface)" }}>
+          <p className="text-sm font-bold" style={{ color: "var(--on-surface)" }}>
             {t.budgetVsCost}
           </p>
           <p className="text-xs" style={{ color: "var(--on-surface-variant)" }}>
@@ -511,11 +512,11 @@ function SectionBarChart({
                   </span>
                 </div>
                 <div className="space-y-1">
-                  <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--surface-container-low)" }}>
-                    <div className="h-full rounded-full" style={{ width: `${(row.budgeted / max) * 100}%`, background: "#c7cbd6" }} />
+                  <div className="h-2 rounded-full overflow-hidden shadow-inner" style={{ background: "var(--surface-container-low)" }}>
+                    <div className="h-full rounded-full shadow-[1px_0_3px_rgba(0,0,0,0.1)]" style={{ width: `${(row.budgeted / max) * 100}%`, background: "#c7cbd6" }} />
                   </div>
-                  <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--surface-container-low)" }}>
-                    <div className="h-full rounded-full" style={{ width: `${(row.actual / max) * 100}%`, background: over ? "#d96b72" : "#70bda9" }} />
+                  <div className="h-2 rounded-full overflow-hidden shadow-inner" style={{ background: "var(--surface-container-low)" }}>
+                    <div className="h-full rounded-full shadow-[1px_0_3px_rgba(0,0,0,0.1)]" style={{ width: `${(row.actual / max) * 100}%`, background: over ? "#d96b72" : "#70bda9" }} />
                   </div>
                 </div>
               </div>
@@ -548,7 +549,7 @@ function DuePaymentsCard({ items, t, onSelect }: { items: BudgetItem[]; t: Budge
   const areaPoints = linePoints.length > 0 ? `0,${height} ${linePoints.join(" ")} ${width},${height}` : "";
 
   return (
-    <div className="rounded-xl p-4 h-full" style={{ background: "var(--surface-container-lowest)", boxShadow: "var(--shadow-ambient)" }}>
+    <div className="rounded-xl p-4 h-full transition-all duration-300 hover:shadow-[0_24px_48px_rgba(26,28,26,0.16)]" style={{ background: "var(--surface-container-lowest)", boxShadow: "var(--shadow-ambient)" }}>
       <div className="flex items-center justify-between gap-3 mb-4">
         <div>
           <p className="text-sm font-medium" style={{ color: "var(--on-surface)" }}>
@@ -558,7 +559,7 @@ function DuePaymentsCard({ items, t, onSelect }: { items: BudgetItem[]; t: Budge
             {t.upcomingPayments}
           </p>
         </div>
-        <p className="text-xl font-light tabular-nums" style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)" }}>
+        <p className="text-xl font-bold tabular-nums" style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)" }}>
           {fmt(dueItems.reduce((sum, item) => sum + balanceDue(item), 0))}
         </p>
       </div>
@@ -569,12 +570,12 @@ function DuePaymentsCard({ items, t, onSelect }: { items: BudgetItem[]; t: Budge
         </p>
       ) : (
         <>
-          <svg className="mb-4 w-full h-24" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={t.duePayments}>
+          <svg className="mb-4 w-full h-24 overflow-visible" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={t.duePayments}>
             <polygon points={areaPoints} fill="#fed3c7" opacity="0.65" />
-            <polyline points={linePoints.join(" ")} fill="none" stroke="#d96b72" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            <polyline points={linePoints.join(" ")} fill="none" stroke="#d96b72" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ filter: "drop-shadow(0 4px 6px rgba(217,107,114,0.35))" }} />
             {linePoints.map((point, index) => {
               const [x, y] = point.split(",");
-              return <circle key={point + index} cx={x} cy={y} r="3" fill="#d96b72" />;
+              return <circle key={point + index} cx={x} cy={y} r="3" fill="#d96b72" style={{ filter: "drop-shadow(0 2px 4px rgba(217,107,114,0.4))" }} />;
             })}
           </svg>
 
@@ -617,7 +618,7 @@ function BudgetPulseCard({
   const status = totalBudgeted === 0 ? t.onTrack : totalActual > totalBudgeted ? t.overBudget : totalActual > totalBudgeted * 0.85 ? t.onTrack : t.underBudget;
 
   return (
-    <div className="rounded-xl p-4 h-full" style={{ background: "var(--surface-container-lowest)", boxShadow: "var(--shadow-ambient)" }}>
+    <div className="rounded-xl p-4 h-full transition-all duration-300 hover:shadow-[0_24px_48px_rgba(26,28,26,0.16)]" style={{ background: "var(--surface-container-lowest)", boxShadow: "var(--shadow-ambient)" }}>
       <div className="flex items-start justify-between gap-3 mb-5">
         <div>
           <p className="text-sm font-medium" style={{ color: "var(--on-surface)" }}>
@@ -627,7 +628,7 @@ function BudgetPulseCard({
             {status}
           </p>
         </div>
-        <p className="text-2xl font-light tabular-nums" style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)" }}>
+        <p className="text-2xl font-bold tabular-nums" style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)" }}>
           {paidPct}%
         </p>
       </div>
@@ -638,9 +639,9 @@ function BudgetPulseCard({
             <span>{t.spent}</span>
             <span>{fmt(totalActual)} / {fmt(totalBudgeted)}</span>
           </div>
-          <div className="h-3 rounded-full overflow-hidden" style={{ background: "var(--surface-container-low)" }}>
+          <div className="h-3 rounded-full overflow-hidden shadow-inner" style={{ background: "var(--surface-container-low)" }}>
             <div
-              className="h-full rounded-full"
+              className="h-full rounded-full shadow-[1px_0_4px_rgba(0,0,0,0.15)]"
               style={{
                 width: `${Math.min(spentPct, 100)}%`,
                 background: totalActual > totalBudgeted && totalBudgeted > 0 ? "#d96b72" : "#70bda9",
@@ -654,8 +655,8 @@ function BudgetPulseCard({
             <span>{t.paidPercent}</span>
             <span>{fmt(totalPaid)} / {fmt(totalActual)}</span>
           </div>
-          <div className="h-3 rounded-full overflow-hidden" style={{ background: "var(--surface-container-low)" }}>
-            <div className="h-full rounded-full" style={{ width: `${Math.min(paidPct, 100)}%`, background: "#6c5b4e" }} />
+          <div className="h-3 rounded-full overflow-hidden shadow-inner" style={{ background: "var(--surface-container-low)" }}>
+            <div className="h-full rounded-full shadow-[1px_0_4px_rgba(0,0,0,0.15)]" style={{ width: `${Math.min(paidPct, 100)}%`, background: "#6c5b4e" }} />
           </div>
         </div>
       </div>
@@ -765,25 +766,25 @@ export default function BudgetPage() {
         }
       />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
-          { label: t.budget.totalBudget, value: totalBudgeted },
-          { label: t.budget.totalSpent, value: totalActual, highlight: totalActual > totalBudgeted && totalBudgeted > 0 },
-          { label: t.budget.depositsPaid, value: totalPaid },
-          { label: t.budget.stillDue, value: totalBalance, highlight: totalBalance > 0 },
-        ].map(({ label, value, highlight }) => (
+          { label: t.budget.totalBudget, value: totalBudgeted, color: "#6c5b4e" },
+          { label: t.budget.totalSpent, value: totalActual, highlight: totalActual > totalBudgeted && totalBudgeted > 0, color: "#d96b72" },
+          { label: t.budget.depositsPaid, value: totalPaid, color: "#70bda9" },
+          { label: t.budget.stillDue, value: totalBalance, highlight: totalBalance > 0, color: "#d9a05b", numberColor: "#1a1a1a" },
+        ].map(({ label, value, highlight, color, numberColor }) => (
           <div
             key={label}
-            className="p-4 rounded-xl"
+            className="p-5 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_48px_rgba(26,28,26,0.16)]"
             style={{
               background: highlight ? "var(--secondary-container)" : "var(--surface-container-lowest)",
               boxShadow: "var(--shadow-ambient)",
             }}
           >
-            <p className="text-2xl font-light mb-1 tabular-nums" style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)" }}>
+            <p className="text-[1.75rem] font-bold mb-1 tabular-nums" style={{ fontFamily: "var(--font-newsreader)", color: numberColor ?? color, textShadow: "1px 1px 2px rgba(255,255,255,0.65), -1px -1px 1px rgba(0,0,0,0.15)" }}>
               {fmt(value)}
             </p>
-            <p className="text-xs" style={{ color: "var(--on-surface-variant)" }}>
+            <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: highlight ? "#7a3b40" : "var(--on-surface-variant)" }}>
               {label}
             </p>
           </div>
@@ -846,7 +847,7 @@ export default function BudgetPage() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[minmax(320px,420px)_1fr] gap-6 mb-8">
-        <div className="rounded-xl p-4" style={{ background: "var(--surface-container-lowest)", boxShadow: "var(--shadow-ambient)" }}>
+        <div className="rounded-xl p-4 transition-all duration-300 hover:shadow-[0_24px_48px_rgba(26,28,26,0.16)]" style={{ background: "var(--surface-container-lowest)", boxShadow: "var(--shadow-ambient)" }}>
           <div className="flex items-center justify-between gap-3 mb-4">
             <div>
               <p className="text-sm font-medium" style={{ color: "var(--on-surface)" }}>
@@ -886,7 +887,7 @@ export default function BudgetPage() {
           return (
             <div
               key={cat}
-              className="rounded-xl overflow-hidden"
+              className="rounded-xl overflow-hidden transition-all duration-300 hover:shadow-[0_24px_48px_rgba(26,28,26,0.16)]"
               style={{ background: "var(--surface-container-lowest)", boxShadow: "var(--shadow-ambient)" }}
             >
               <button
@@ -925,7 +926,7 @@ export default function BudgetPage() {
                       {catItems.map((item, i) => (
                         <tr
                           key={item.id}
-                          className="transition-colors hover:bg-[var(--surface-container-low)]"
+                          className="transition-all hover:bg-[var(--surface-container-lowest)] hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)] relative z-0 hover:z-10"
                           style={{ background: i % 2 === 0 ? "transparent" : "rgba(243,237,232,0.45)" }}
                         >
                           <td className="px-4 py-3">

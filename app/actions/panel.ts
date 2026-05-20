@@ -5,6 +5,16 @@ import { getSession } from "@/lib/auth";
 import type { Feature } from "@/lib/features";
 import type { BudgetItem, Guest, Letter, NewsPost, QAPair, Table } from "@/lib/types";
 
+type GuestInput = Omit<Guest, "id" | "submission_id" | "created_at" | "archived">;
+
+export type GuestImportResult = {
+  guests: Guest[];
+  inserted: number;
+  skipped: number;
+  duplicates: number;
+  invalid: number;
+};
+
 type Submission = {
   id: string;
   couple_name: string | null;
@@ -46,6 +56,25 @@ function scopedId(session: Awaited<ReturnType<typeof getSession>>) {
   return session?.submissionId ?? null;
 }
 
+function cleanGuestText(value: unknown) {
+  return String(value ?? "").trim();
+}
+
+function normalizeGuestStatus(value: unknown): Guest["rsvp_status"] {
+  const status = cleanGuestText(value).toLowerCase().replace(/[_-]+/g, " ");
+  if (["confirmed", "confirmado", "yes", "si", "sí", "attending", "accepted"].includes(status)) return "confirmed";
+  if (["declined", "rechazado", "no", "not attending", "rejected"].includes(status)) return "declined";
+  if (["pending", "pendiente", "maybe", "tentative"].includes(status)) return "pending";
+  return "awaiting";
+}
+
+function normalizeGuestBoolean(value: unknown) {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value > 0;
+  const raw = cleanGuestText(value).toLowerCase();
+  return ["1", "yes", "y", "true", "si", "sí", "x"].includes(raw);
+}
+
 export async function getAdminData(): Promise<{
   users: PanelUser[];
   submissions: Submission[];
@@ -77,7 +106,7 @@ export async function listGuests(): Promise<Guest[]> {
   return (data ?? []) as Guest[];
 }
 
-export async function createGuest(input: Omit<Guest, "id" | "submission_id" | "created_at" | "archived">): Promise<Guest> {
+export async function createGuest(input: GuestInput): Promise<Guest> {
   const { session, supabase } = await requirePanel("guests");
   const submissionId = requireSubmissionId(session);
   const { data, error } = await supabase
@@ -87,6 +116,86 @@ export async function createGuest(input: Omit<Guest, "id" | "submission_id" | "c
     .single();
   if (error) throw new Error(error.message);
   return data as Guest;
+}
+
+export async function importGuests(input: GuestInput[]): Promise<GuestImportResult> {
+  const { session, supabase } = await requirePanel("guests");
+  const submissionId = requireSubmissionId(session);
+
+  const { data: existingGuests, error: existingError } = await supabase
+    .from("guests")
+    .select("email")
+    .eq("submission_id", submissionId)
+    .neq("email", "");
+  if (existingError) throw new Error(existingError.message);
+
+  const existingEmails = new Set(
+    (existingGuests ?? []).map((guest) => cleanGuestText(guest.email).toLowerCase()).filter(Boolean)
+  );
+  const importedEmails = new Set<string>();
+  const guestsToInsert: (GuestInput & { submission_id: string; archived: boolean })[] = [];
+  let invalid = 0;
+  let duplicates = 0;
+
+  for (const row of input) {
+    const firstName = cleanGuestText(row.first_name);
+    const lastName = cleanGuestText(row.last_name);
+    const email = cleanGuestText(row.email).toLowerCase();
+
+    if (!firstName && !lastName) {
+      invalid += 1;
+      continue;
+    }
+
+    if (email) {
+      if (existingEmails.has(email) || importedEmails.has(email)) {
+        duplicates += 1;
+        continue;
+      }
+      importedEmails.add(email);
+    }
+
+    guestsToInsert.push({
+      first_name: firstName || lastName,
+      last_name: firstName ? lastName : "",
+      email,
+      phone: cleanGuestText(row.phone),
+      rsvp_status: normalizeGuestStatus(row.rsvp_status),
+      dietary: cleanGuestText(row.dietary),
+      plus_one: normalizeGuestBoolean(row.plus_one),
+      table_id: null,
+      seat_index: null,
+      notes: cleanGuestText(row.notes),
+      submission_id: submissionId,
+      archived: false,
+    });
+  }
+
+  if (guestsToInsert.length === 0) {
+    return {
+      guests: [],
+      inserted: 0,
+      skipped: invalid + duplicates,
+      duplicates,
+      invalid,
+    };
+  }
+
+  const insertedGuests: Guest[] = [];
+  for (let index = 0; index < guestsToInsert.length; index += 200) {
+    const chunk = guestsToInsert.slice(index, index + 200);
+    const { data, error } = await supabase.from("guests").insert(chunk).select();
+    if (error) throw new Error(error.message);
+    insertedGuests.push(...((data ?? []) as Guest[]));
+  }
+
+  return {
+    guests: insertedGuests,
+    inserted: insertedGuests.length,
+    skipped: invalid + duplicates,
+    duplicates,
+    invalid,
+  };
 }
 
 export async function updateGuest(id: string, input: Partial<Omit<Guest, "id" | "submission_id" | "created_at">>): Promise<Guest> {
@@ -130,10 +239,25 @@ export async function createTable(input: Pick<Table, "name" | "capacity" | "shap
   return data as Table;
 }
 
-export async function assignGuestTable(guestId: string, tableId: string | null): Promise<void> {
+export async function assignGuestTable(guestId: string, tableId: string | null, seatIndex: number | null = null): Promise<void> {
   const { session, supabase } = await requirePanel("seating");
-  let query = supabase.from("guests").update({ table_id: tableId }).eq("id", guestId);
   const submissionId = scopedId(session);
+
+  if (tableId && seatIndex !== null) {
+    let occupiedQuery = supabase
+      .from("guests")
+      .select("id")
+      .eq("table_id", tableId)
+      .eq("seat_index", seatIndex)
+      .eq("archived", false)
+      .neq("id", guestId);
+    if (submissionId) occupiedQuery = occupiedQuery.eq("submission_id", submissionId);
+    const { data: occupiedGuest, error: occupiedError } = await occupiedQuery.maybeSingle();
+    if (occupiedError) throw new Error(occupiedError.message);
+    if (occupiedGuest) throw new Error("That seat is already assigned to another guest.");
+  }
+
+  let query = supabase.from("guests").update({ table_id: tableId, seat_index: tableId ? seatIndex : null }).eq("id", guestId);
   if (submissionId) query = query.eq("submission_id", submissionId);
   const { error } = await query;
   if (error) throw new Error(error.message);
@@ -161,9 +285,18 @@ export async function updateTable(
   return data as Table;
 }
 
+export async function updateTablePosition(id: string, x: number, y: number): Promise<void> {
+  const { session, supabase } = await requirePanel("seating");
+  let query = supabase.from("tables").update({ x, y }).eq("id", id);
+  const submissionId = scopedId(session);
+  if (submissionId) query = query.eq("submission_id", submissionId);
+  const { error } = await query;
+  if (error) throw new Error(error.message);
+}
+
 export async function deleteTable(id: string): Promise<void> {
   const { session, supabase } = await requirePanel("seating");
-  let guestQuery = supabase.from("guests").update({ table_id: null }).eq("table_id", id);
+  let guestQuery = supabase.from("guests").update({ table_id: null, seat_index: null }).eq("table_id", id);
   let tableQuery = supabase.from("tables").delete().eq("id", id);
   const submissionId = scopedId(session);
   if (submissionId) {

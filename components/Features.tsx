@@ -50,15 +50,10 @@ export function Features() {
               ))}
             </ul>
             <div className="experience-panel__demo-wrap">
-              <a
-                href={DEMO_ORIGIN}
-                target="_blank"
-                rel="noreferrer"
-                className="experience-demo-btn"
-              >
+              <Link href="/demo-login" className="experience-demo-btn">
                 <span>{t("features.viewDemo")}</span>
                 <span className="experience-demo-btn__arrow">→</span>
-              </a>
+              </Link>
             </div>
           </article>
 

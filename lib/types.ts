@@ -10,6 +10,7 @@ export interface Guest {
   dietary: string;
   plus_one: boolean;
   table_id: string | null;
+  seat_index: number | null;
   notes: string;
   submission_id: string;
   archived: boolean;

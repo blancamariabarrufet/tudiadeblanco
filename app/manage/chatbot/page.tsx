@@ -133,7 +133,7 @@ export default function ChatbotPage() {
             style={{ background: "var(--surface-container-lowest)", boxShadow: "var(--shadow-ambient)" }}
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-medium" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface)" }}>
+              <h2 className="text-lg font-bold" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface)" }}>
                 Questions & Answers
               </h2>
               <button
@@ -184,7 +184,7 @@ export default function ChatbotPage() {
             style={{ background: "var(--surface-container-lowest)", boxShadow: "var(--shadow-ambient)" }}
           >
             <label
-              className="block text-sm font-medium mb-1"
+              className="block text-base font-bold mb-1"
               style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface)" }}
             >
               Additional context your concierge should know
@@ -221,7 +221,7 @@ export default function ChatbotPage() {
             className="px-4 py-3 flex items-center justify-between"
             style={{ borderBottom: "1px solid rgba(204,198,188,0.2)" }}
           >
-            <p className="text-sm font-medium" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface)" }}>
+            <p className="text-base font-bold" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface)" }}>
               Live Preview
             </p>
             <button

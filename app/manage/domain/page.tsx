@@ -53,13 +53,13 @@ export default function DomainPage() {
       >
         <div>
           <p
-            className="text-xs uppercase tracking-[0.12em]"
+            className="text-xs font-bold uppercase tracking-[0.12em]"
             style={{ fontFamily: "var(--font-work-sans)", color: "var(--primary)" }}
           >
             Setup plan
           </p>
           <h2
-            className="mt-4 text-3xl leading-tight"
+            className="mt-4 text-4xl font-bold leading-tight"
             style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)" }}
           >
             A memorable address, handled calmly.
@@ -87,7 +87,7 @@ export default function DomainPage() {
               </div>
               <div>
                 <h3
-                  className="text-sm font-medium"
+                  className="text-base font-bold"
                   style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface)" }}
                 >
                   {title}

@@ -194,7 +194,7 @@ export default function NewsPage() {
       >
         {posts.length === 0 ? (
           <div className="p-12 text-center">
-            <p style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)", fontSize: "1.125rem" }}>{t.news.noPostsTitle}</p>
+            <p style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)", fontSize: "1.125rem", fontWeight: "bold" }}>{t.news.noPostsTitle}</p>
             <p className="mt-1 text-sm" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>
               {t.news.noPostsSubtitle}
             </p>
@@ -205,7 +205,7 @@ export default function NewsPage() {
             <thead>
               <tr style={{ background: "var(--surface-container-low)" }}>
                 {[t.news.postTitle, "Status", t.news.date, ""].map((h) => (
-                  <th key={h} className="text-left px-4 py-3 text-xs font-medium" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>
+                  <th key={h} className="text-left px-4 py-3 text-xs font-bold uppercase tracking-wider" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>
                     {h}
                   </th>
                 ))}
@@ -218,9 +218,14 @@ export default function NewsPage() {
                   style={{ background: i % 2 === 0 ? "var(--surface-container-lowest)" : "var(--surface-container-low)" }}
                 >
                   <td className="px-4 py-3">
-                    <p style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)", fontSize: "0.9375rem" }}>
+                    <button
+                      type="button"
+                      onClick={() => setEditPost({ ...post })}
+                      className="block w-full text-left cursor-pointer transition-colors hover:text-[var(--on-surface)]"
+                      style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)", fontSize: "0.9375rem", fontWeight: "bold" }}
+                    >
                       {post.title || <span style={{ color: "var(--on-surface-variant)", fontStyle: "italic" }}>Untitled</span>}
-                    </p>
+                    </button>
                     {post.status === "scheduled" && post.scheduled_at && (
                       <p className="text-xs mt-0.5" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>
                         Scheduled for {new Date(post.scheduled_at).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}

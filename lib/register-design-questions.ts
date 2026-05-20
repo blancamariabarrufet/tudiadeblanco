@@ -176,7 +176,7 @@ export const REGISTRATION_DESIGN_QUESTIONS: RegistrationDesignQuestion[] = [
       { value: "travel_stay", label: { en: "Travel & stay", es: "Viaje y alojamiento" } },
       { value: "our_story", label: { en: "Our story", es: "Nuestra historia" } },
       { value: "gift_registry", label: { en: "Gift registry", es: "Lista de regalos" } },
-      { value: "ai_concierge", label: { en: "AI concierge", es: "Conserje IA" } },
+      { value: "ai_concierge", label: { en: "AI concierge", es: "Concierge IA" } },
       { value: "choose_for_me", label: { en: "Choose for me", es: "Elegid por mi" } },
       { value: "other", label: { en: "Other", es: "Otro" } },
     ],
@@ -195,7 +195,7 @@ export const REGISTRATION_DESIGN_QUESTIONS: RegistrationDesignQuestion[] = [
     options: [
       { value: "gift_registry", label: { en: "Gift registry", es: "Lista de regalos" } },
       { value: "our_story", label: { en: "Our story", es: "Nuestra historia" } },
-      { value: "ai_concierge", label: { en: "AI concierge", es: "Conserje IA" } },
+      { value: "ai_concierge", label: { en: "AI concierge", es: "Concierge IA" } },
       { value: "nothing_to_hide", label: { en: "Nothing to hide", es: "Nada que ocultar" } },
       { value: "choose_for_me", label: { en: "Choose for me", es: "Elegid por mi" } },
       { value: "other", label: { en: "Other", es: "Otro" } },

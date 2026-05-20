@@ -79,10 +79,10 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.pricing": "Pricing",
     "nav.login": "Login",
     "nav.cta": "Begin Your Story",
-    "nav.mobileTitle": "The Digital Heirloom.",
+    "nav.mobileTitle": "Tu Día de Blanco.",
 
     // Hero
-    "hero.eyebrow": "Introducing the Digital Heirloom",
+    "hero.eyebrow": "Introducing Tu Día de Blanco",
     "hero.headline1": "Your Love Story,",
     "hero.headline2": "Elegantly Digital.",
     "hero.body":
@@ -139,7 +139,7 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Process section
     "process.heading": "The Process",
-    "process.sub": "Your bespoke digital heirlooom, crafted step by step.",
+    "process.sub": "Your bespoke Tu Día de Blanco experience, crafted step by step.",
     "process.step1.title": "Brief & vision",
     "process.step1.body": "Style, must-haves & event details",
     "process.step2.title": "Design & content",
@@ -168,7 +168,7 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Footer
     "footer.copyright":
-      "\u00A9 2025, The Ethereal Concierge. Crafted for the Modern Heirloom.",
+      "\u00A9 2025, The Ethereal Concierge. Crafted for Tu Día de Blanco.",
     "footer.privacy": "Privacy",
     "footer.terms": "Terms",
     "footer.concierge": "Assistant Access",
@@ -187,7 +187,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "order.step5": "How many guests?",
     "order.step6": "What would you like?",
     "order.featureHint":
-      "Selected experiences become part of your tailored digital heirloom.",
+      "Selected experiences become part of Tu Día de Blanco.",
     "order.step7": "How should the website feel?",
     "order.vibeQuestion": "What's the overall vibe?",
     "order.paletteQuestion": "Any color preferences or palette ideas?",
@@ -349,10 +349,10 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.pricing": "Precios",
     "nav.login": "Login",
     "nav.cta": "Comienza Tu Historia",
-    "nav.mobileTitle": "La Herencia Digital.",
+    "nav.mobileTitle": "Tu Día de Blanco.",
 
     // Hero
-    "hero.eyebrow": "Presentamos la Herencia Digital",
+    "hero.eyebrow": "Presentamos Tu Día de Blanco",
     "hero.headline1": "Tu Historia de Amor,",
     "hero.headline2": "Elegantemente Digital.",
     "hero.body":
@@ -411,7 +411,7 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Process section
     "process.heading": "El Proceso",
-    "process.sub": "Tu reliquia digital, creada paso a paso.",
+    "process.sub": "Tu experiencia Tu Día de Blanco, creada paso a paso.",
     "process.step1.title": "Visión y brief",
     "process.step1.body": "Estilo, requisitos y detalles del evento",
     "process.step2.title": "Diseño y contenido",
@@ -441,8 +441,8 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Footer
     "footer.copyright":
-      "\u00A9 2025, The Ethereal Concierge. Creado para la Herencia Moderna.",
-    "footer.privacy": "Privacidad",
+      "\u00A9 2025, The Ethereal Concierge. Creado para Tu Día de Blanco.",
+    "footer.privacy": "Privacy",
     "footer.terms": "T\u00E9rminos",
     "footer.concierge": "Acceso Asistente",
     "footer.press": "Prensa",
@@ -460,7 +460,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "order.step5": "\u00BFCu\u00E1ntos invitados?",
     "order.step6": "\u00BFQu\u00E9 os gustar\u00EDa?",
     "order.featureHint":
-      "Las experiencias seleccionadas formar\u00E1n parte de vuestra herencia digital a medida.",
+      "Las experiencias seleccionadas formar\u00E1n parte de Tu Día de Blanco.",
     "order.step7": "\u00BFC\u00F3mo debe sentirse la web?",
     "order.vibeQuestion": "\u00BFCu\u00E1l es la vibra general?",
     "order.paletteQuestion": "\u00BFPreferencias de color o ideas de paleta?",

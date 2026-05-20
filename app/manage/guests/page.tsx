@@ -5,11 +5,15 @@ import { useState, useEffect, useCallback } from "react";
 import { ModuleHeader } from "@/components/layout/ModuleHeader";
 import { RSVPChip } from "@/components/ui/StatusChip";
 import { Overlay, ConfirmOverlay } from "@/components/ui/Overlay";
-import { archiveGuest as archiveGuestAction, createGuest, listGuests, updateGuest } from "@/app/actions/panel";
+import { archiveGuest as archiveGuestAction, createGuest, importGuests as importGuestsAction, listGuests, updateGuest } from "@/app/actions/panel";
 import type { Guest, RSVPStatus } from "@/lib/types";
-import { Plus, Trash2, Search, Download, ChevronUp, ChevronDown } from "lucide-react";
+import { Plus, Trash2, Search, Download, Upload, ChevronUp, ChevronDown } from "lucide-react";
 
-const EMPTY_GUEST: Omit<Guest, "id" | "submission_id" | "created_at" | "archived"> = {
+type GuestDraft = Omit<Guest, "id" | "submission_id" | "created_at" | "archived">;
+type TextImportField = "first_name" | "last_name" | "email" | "phone" | "dietary" | "notes";
+type ImportField = TextImportField | "rsvp_status" | "plus_one" | "full_name";
+
+const EMPTY_GUEST: GuestDraft = {
   first_name: "",
   last_name: "",
   email: "",
@@ -18,10 +22,89 @@ const EMPTY_GUEST: Omit<Guest, "id" | "submission_id" | "created_at" | "archived
   dietary: "",
   plus_one: false,
   table_id: null,
+  seat_index: null,
   notes: "",
 };
 
 type SortKey = keyof Pick<Guest, "first_name" | "last_name" | "rsvp_status" | "dietary">;
+
+const HEADER_ALIASES: Record<string, ImportField> = {
+  firstname: "first_name",
+  first: "first_name",
+  nombre: "first_name",
+  lastname: "last_name",
+  surname: "last_name",
+  apellido: "last_name",
+  apellidos: "last_name",
+  fullname: "full_name",
+  name: "full_name",
+  guest: "full_name",
+  guestname: "full_name",
+  nombrecompleto: "full_name",
+  email: "email",
+  mail: "email",
+  correo: "email",
+  phone: "phone",
+  telephone: "phone",
+  mobile: "phone",
+  telefono: "phone",
+  rsvp: "rsvp_status",
+  status: "rsvp_status",
+  rsvpstatus: "rsvp_status",
+  estado: "rsvp_status",
+  dietary: "dietary",
+  dietaryrequirements: "dietary",
+  allergies: "dietary",
+  alergias: "dietary",
+  restriccionesalimentarias: "dietary",
+  meal: "dietary",
+  plusone: "plus_one",
+  plus1: "plus_one",
+  companion: "plus_one",
+  acompanante: "plus_one",
+  pareja: "plus_one",
+  invitadoextra: "plus_one",
+  notes: "notes",
+  note: "notes",
+  notas: "notes",
+  comments: "notes",
+  comentarios: "notes",
+};
+
+function normalizeHeader(value: unknown) {
+  return String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function cellText(value: unknown) {
+  if (value instanceof Date) return value.toISOString().slice(0, 10);
+  return String(value ?? "").trim();
+}
+
+function splitName(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length <= 1) return { first_name: parts[0] ?? "", last_name: "" };
+  return { first_name: parts.slice(0, -1).join(" "), last_name: parts.at(-1) ?? "" };
+}
+
+function parseRSVPStatus(value: unknown): RSVPStatus {
+  const status = cellText(value).toLowerCase().replace(/[_-]+/g, " ");
+  if (["confirmed", "confirmado", "yes", "si", "sí", "attending", "accepted"].includes(status)) return "confirmed";
+  if (["declined", "rechazado", "no", "not attending", "rejected"].includes(status)) return "declined";
+  if (["pending", "pendiente", "maybe", "tentative"].includes(status)) return "pending";
+  return "awaiting";
+}
+
+function parseBoolean(value: unknown) {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value > 0;
+  const raw = cellText(value).toLowerCase();
+  return ["1", "yes", "y", "true", "si", "sí", "x"].includes(raw);
+}
 
 export default function GuestsPage() {
   const [guests, setGuests] = useState<Guest[]>([]);
@@ -31,9 +114,15 @@ export default function GuestsPage() {
   const [sortKey, setSortKey] = useState<SortKey>("last_name");
   const [sortAsc, setSortAsc] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   const [editGuest, setEditGuest] = useState<Guest | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [newGuest, setNewGuest] = useState({ ...EMPTY_GUEST });
+  const [importFileName, setImportFileName] = useState("");
+  const [importRows, setImportRows] = useState<GuestDraft[]>([]);
+  const [importErrors, setImportErrors] = useState<string[]>([]);
+  const [importResult, setImportResult] = useState<string | null>(null);
+  const [importing, setImporting] = useState(false);
 
   const load = useCallback(async () => {
     const data = await listGuests();
@@ -102,6 +191,105 @@ export default function GuestsPage() {
     setDeleteTarget(null);
   }
 
+  function resetImport() {
+    setImportFileName("");
+    setImportRows([]);
+    setImportErrors([]);
+    setImportResult(null);
+    setImporting(false);
+  }
+
+  async function parseImportFile(file: File | null) {
+    setImportResult(null);
+    setImportRows([]);
+    setImportErrors([]);
+    setImportFileName(file?.name ?? "");
+    if (!file) return;
+
+    try {
+      const { readSheet } = await import("read-excel-file/browser");
+      const rawRows = await readSheet(file);
+      const headerIndex = rawRows.findIndex((row) => row.some((cell) => HEADER_ALIASES[normalizeHeader(cell)]));
+      if (headerIndex < 0) throw new Error("No supported header row found.");
+
+      const mappedHeaders = rawRows[headerIndex].map((cell) => HEADER_ALIASES[normalizeHeader(cell)] ?? null);
+      const hasName = mappedHeaders.includes("first_name") || mappedHeaders.includes("full_name");
+      if (!hasName) throw new Error("The sheet needs a First Name or Name column.");
+
+      const parsed: GuestDraft[] = [];
+      const rowErrors: string[] = [];
+
+      rawRows.slice(headerIndex + 1).forEach((row, offset) => {
+        if (row.every((cell) => cellText(cell) === "")) return;
+
+        const draft: GuestDraft = { ...EMPTY_GUEST };
+        let fullName = "";
+
+        row.forEach((cell, index) => {
+          const field = mappedHeaders[index];
+          if (!field) return;
+
+          if (field === "full_name") {
+            fullName = cellText(cell);
+            return;
+          }
+
+          if (field === "rsvp_status") {
+            draft.rsvp_status = parseRSVPStatus(cell);
+            return;
+          }
+
+          if (field === "plus_one") {
+            draft.plus_one = parseBoolean(cell);
+            return;
+          }
+
+          draft[field] = cellText(cell);
+        });
+
+        if ((!draft.first_name || !draft.last_name) && fullName) {
+          const name = splitName(fullName);
+          draft.first_name ||= name.first_name;
+          draft.last_name ||= name.last_name;
+        }
+
+        draft.email = draft.email.toLowerCase();
+
+        if (!draft.first_name && !draft.last_name) {
+          rowErrors.push(`Row ${headerIndex + offset + 2}: missing guest name.`);
+          return;
+        }
+
+        parsed.push(draft);
+      });
+
+      setImportRows(parsed);
+      setImportErrors(rowErrors);
+    } catch (error) {
+      setImportErrors([error instanceof Error ? error.message : "Could not read that Excel file."]);
+    }
+  }
+
+  async function submitImport() {
+    if (importRows.length === 0) return;
+    setImporting(true);
+    setImportResult(null);
+    try {
+      const result = await importGuestsAction(importRows);
+      await load();
+      setImportRows([]);
+      setImportResult(
+        `Imported ${result.inserted} guest${result.inserted === 1 ? "" : "s"}${
+          result.skipped ? ` and skipped ${result.skipped}` : ""
+        }.`
+      );
+    } catch (error) {
+      setImportErrors([error instanceof Error ? error.message : "Import failed."]);
+    } finally {
+      setImporting(false);
+    }
+  }
+
   function exportCSV() {
     const rows = [
       ["First Name", "Last Name", "Email", "Phone", "RSVP Status", "Dietary", "Plus One", "Notes"],
@@ -132,6 +320,13 @@ export default function GuestsPage() {
         actions={
           <div className="flex gap-2">
             <button
+              onClick={() => { resetImport(); setShowImport(true); }}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-[var(--surface-container)]"
+              style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}
+            >
+              <Upload size={14} strokeWidth={1} /> Import
+            </button>
+            <button
               onClick={exportCSV}
               className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-[var(--surface-container)]"
               style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}
@@ -152,28 +347,28 @@ export default function GuestsPage() {
       {/* RSVP Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
         {[
-          { label: "Confirmed", count: counts.confirmed, active: filterStatus === "confirmed", status: "confirmed" as const, highlight: true },
-          { label: "Declined", count: counts.declined, active: filterStatus === "declined", status: "declined" as const, highlight: false },
-          { label: "Pending", count: counts.pending, active: filterStatus === "pending", status: "pending" as const, highlight: false },
-          { label: `${completion}% complete`, count: counts.total, active: filterStatus === "all", status: "all" as const, highlight: false },
-        ].map(({ label, count, active, status, highlight }) => (
+          { label: "Confirmed", count: counts.confirmed, active: filterStatus === "confirmed", status: "confirmed" as const, color: "#70bda9" },
+          { label: "Declined", count: counts.declined, active: filterStatus === "declined", status: "declined" as const, color: "#d96b72" },
+          { label: "Pending", count: counts.pending, active: filterStatus === "pending", status: "pending" as const, color: "#1a1a1a" },
+          { label: `${completion}% complete`, count: counts.total, active: filterStatus === "all", status: "all" as const, color: "#6c5b4e" },
+        ].map(({ label, count, active, status, color }) => (
           <button
             key={status}
             onClick={() => setFilterStatus(active ? "all" : status)}
-            className="text-left p-4 rounded-xl transition-all"
+            className="text-left p-4 rounded-xl transition-all hover:-translate-y-1"
             style={{
-              background: highlight ? "var(--secondary-container)" : active ? "var(--surface-container)" : "var(--surface-container-lowest)",
+              background: active ? "var(--surface-container)" : "var(--surface-container-lowest)",
               boxShadow: "var(--shadow-ambient)",
             }}
           >
             <p
-              className="text-2xl font-light mb-1"
-              style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)" }}
+              className="text-[1.75rem] font-bold mb-1"
+              style={{ fontFamily: "var(--font-newsreader)", color: color, textShadow: "1px 1px 2px rgba(255,255,255,0.65), -1px -1px 1px rgba(0,0,0,0.15)" }}
             >
               {count}
             </p>
             <p
-              className="text-xs"
+              className="text-xs font-bold uppercase tracking-wider"
               style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}
             >
               {label}
@@ -214,7 +409,10 @@ export default function GuestsPage() {
       {/* Table */}
       <div
         className="rounded-2xl overflow-hidden"
-        style={{ background: "var(--surface-container-lowest)", boxShadow: "var(--shadow-ambient)" }}
+        style={{ 
+          background: "var(--surface-container-lowest)", 
+          boxShadow: "var(--shadow-ambient)" 
+        }}
       >
         {loading ? (
           <div className="p-12 text-center" style={{ color: "var(--on-surface-variant)", fontFamily: "var(--font-work-sans)", fontSize: "0.875rem" }}>
@@ -222,7 +420,7 @@ export default function GuestsPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="p-12 text-center">
-            <p style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)", fontSize: "1.125rem" }}>
+            <p style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)", fontSize: "1.125rem", fontWeight: "bold" }}>
               No guests found
             </p>
             <p className="mt-1 text-sm" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>
@@ -343,6 +541,110 @@ export default function GuestsPage() {
           <div className="flex justify-end gap-3 mt-6">
             <button onClick={() => setShowAdd(false)} className="px-4 py-2 rounded-lg text-sm" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>Cancel</button>
             <button onClick={addGuest} className="px-4 py-2 rounded-lg text-sm font-medium" style={{ background: "var(--primary)", color: "white", fontFamily: "var(--font-work-sans)" }}>Add Guest</button>
+          </div>
+        </Overlay>
+      )}
+
+      {/* Import Guests Overlay */}
+      {showImport && (
+        <Overlay title="Import Guests" onClose={() => { setShowImport(false); resetImport(); }} width="max-w-2xl">
+          <div className="space-y-5">
+            <div>
+              <label className="block text-xs font-medium mb-1" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>Excel file</label>
+              <input
+                type="file"
+                accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                onChange={(e) => {
+                  const file = e.currentTarget.files?.[0] ?? null;
+                  void parseImportFile(file);
+                  e.currentTarget.value = "";
+                }}
+                className="input-underline"
+              />
+              <p className="mt-2 text-xs leading-5" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>
+                Columns: First Name, Last Name, Email, Phone, RSVP Status, Dietary, Plus One, Notes.
+              </p>
+            </div>
+
+            {importFileName && (
+              <p className="text-sm" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface)" }}>
+                {importFileName}
+              </p>
+            )}
+
+            {importErrors.length > 0 && (
+              <div className="space-y-1">
+                {importErrors.slice(0, 5).map((error) => (
+                  <p key={error} className="text-xs leading-5" style={{ fontFamily: "var(--font-work-sans)", color: "#7f3f36" }}>
+                    {error}
+                  </p>
+                ))}
+                {importErrors.length > 5 && (
+                  <p className="text-xs" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>
+                    {importErrors.length - 5} more rows need attention.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {importRows.length > 0 && (
+              <div className="overflow-x-auto">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <p className="text-sm font-medium" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface)" }}>
+                    {importRows.length} guest{importRows.length === 1 ? "" : "s"} ready
+                  </p>
+                  <p className="text-xs" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>
+                    Preview
+                  </p>
+                </div>
+                <table className="w-full min-w-[560px] text-xs">
+                  <thead>
+                    <tr style={{ background: "var(--surface-container-low)" }}>
+                      {["Name", "Email", "RSVP", "Plus One"].map((label) => (
+                        <th key={label} className="text-left px-3 py-2 font-medium" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>
+                          {label}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {importRows.slice(0, 5).map((guest, index) => (
+                      <tr key={`${guest.email}-${index}`} style={{ background: index % 2 === 0 ? "transparent" : "var(--surface-container-low)" }}>
+                        <td className="px-3 py-2" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface)" }}>
+                          {guest.first_name} {guest.last_name}
+                        </td>
+                        <td className="px-3 py-2" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>
+                          {guest.email || "-"}
+                        </td>
+                        <td className="px-3 py-2" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>
+                          {guest.rsvp_status}
+                        </td>
+                        <td className="px-3 py-2" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>
+                          {guest.plus_one ? "Yes" : "No"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {importResult && (
+              <p className="text-sm" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface)" }}>
+                {importResult}
+              </p>
+            )}
+          </div>
+          <div className="flex justify-end gap-3 mt-6">
+            <button onClick={() => { setShowImport(false); resetImport(); }} className="px-4 py-2 rounded-lg text-sm" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>Close</button>
+            <button
+              onClick={submitImport}
+              disabled={importing || importRows.length === 0}
+              className="px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
+              style={{ background: "var(--primary)", color: "white", fontFamily: "var(--font-work-sans)" }}
+            >
+              {importing ? "Importing..." : "Import Guests"}
+            </button>
           </div>
         </Overlay>
       )}

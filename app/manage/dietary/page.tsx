@@ -51,10 +51,16 @@ function CategorySection({
 }) {
   if (guests.length === 0) return null;
   return (
-    <div className="mb-6">
-      <div className="flex items-center gap-3 mb-3">
+    <div 
+      className="mb-6 p-5 rounded-2xl"
+      style={{
+        background: "var(--surface-container-lowest)",
+        boxShadow: "var(--shadow-ambient)"
+      }}
+    >
+      <div className="flex items-center gap-3 mb-4">
         <h3
-          className="text-base font-medium"
+          className="text-lg font-bold"
           style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface)" }}
         >
           {title}
@@ -70,8 +76,8 @@ function CategorySection({
         {guests.map((g, i) => (
           <div
             key={g.id}
-            className="flex items-center justify-between px-4 py-2.5 rounded-lg"
-            style={{ background: i % 2 === 0 ? "var(--surface-container-lowest)" : "var(--surface-container-low)" }}
+            className="flex items-center justify-between px-4 py-2.5 rounded-lg transition-colors hover:bg-[var(--surface-container)]"
+            style={{ background: i % 2 === 0 ? "var(--surface-container-low)" : "var(--surface-container-lowest)" }}
           >
             <div>
               <p className="text-sm" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface)" }}>
@@ -166,7 +172,7 @@ export default function DietaryPage() {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className="px-4 py-2 rounded-lg text-sm font-medium transition-all capitalize"
+            className="px-4 py-2 rounded-lg text-sm font-bold tracking-wider uppercase transition-all"
             style={{
               fontFamily: "var(--font-work-sans)",
               background: tab === t ? "var(--surface-container-lowest)" : "transparent",
@@ -183,7 +189,7 @@ export default function DietaryPage() {
         <div>
           {guestsWithRequirements.length === 0 ? (
             <div className="text-center py-16">
-              <p style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)", fontSize: "1.125rem" }}>No dietary requirements recorded</p>
+              <p style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)", fontSize: "1.125rem", fontWeight: "bold" }}>No dietary requirements recorded</p>
               <p className="mt-1 text-sm" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>Dietary information comes from your guest list.</p>
             </div>
           ) : (
@@ -205,7 +211,7 @@ export default function DietaryPage() {
         <div>
           {guestsWithAccessibility.length === 0 ? (
             <div className="text-center py-16">
-              <p style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)", fontSize: "1.125rem" }}>No accessibility needs recorded</p>
+              <p style={{ fontFamily: "var(--font-newsreader)", color: "var(--on-surface)", fontSize: "1.125rem", fontWeight: "bold" }}>No accessibility needs recorded</p>
               <p className="mt-1 text-sm" style={{ fontFamily: "var(--font-work-sans)", color: "var(--on-surface-variant)" }}>Add notes to guests in the Guest List to capture accessibility information.</p>
             </div>
           ) : (
