@@ -8,7 +8,7 @@ import { login } from "@/app/actions/auth";
 import { useLanguage, type Locale } from "@/lib/i18n";
 import { buildSiteUrl } from "@/lib/site-url";
 import { createClient } from "@/lib/supabase/client";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 
 const copy: Record<
   Locale,
@@ -180,13 +180,14 @@ export default function LoginPage() {
       <div className="absolute inset-x-5 top-5 flex items-center justify-between gap-4 sm:inset-x-8 sm:top-8">
         <Link
           href={localizedPath("/")}
-          className="min-w-0 truncate text-xs transition-opacity hover:opacity-70"
+          className="flex min-w-0 items-center gap-1.5 transition-opacity hover:opacity-70"
           style={{
             color: "oklch(0.48 0.035 66)",
             fontFamily: "var(--font-work-sans)",
           }}
         >
-          {text.home}
+          <ArrowLeft size={14} strokeWidth={2} className="shrink-0" />
+          <span className="truncate text-xs">{text.home}</span>
         </Link>
         <div className="flex shrink-0 items-center gap-2">
           <button

@@ -1292,7 +1292,7 @@ export default function SeatingPage() {
         <div className="grid grid-cols-1 items-start gap-4 xl:block xl:pr-20">
           {/* Tables canvas */}
           <div
-            className={`${isTableEditorFullscreen ? "fixed inset-0 z-[210] h-screen min-h-screen rounded-none p-6 sm:p-10" : "min-w-0 h-[calc(100vh-180px)] min-h-[640px] rounded-2xl p-10"} relative overflow-auto shadow-inner border`}
+            className={`${isTableEditorFullscreen ? "fixed inset-0 z-[210] h-screen min-h-screen w-screen h-[100dvh] min-h-[100dvh] w-[100dvw] rounded-none border-0 p-0" : "min-w-0 h-[calc(100vh-180px)] min-h-[640px] rounded-2xl border p-10"} relative overflow-auto shadow-inner`}
             style={{ 
               background: "url('/images/noise.png'), linear-gradient(135deg, var(--surface-container-low), #e0d9cc)",
               backgroundRepeat: "repeat",
@@ -1300,7 +1300,7 @@ export default function SeatingPage() {
             }}
           >
             <div
-              className="sticky right-0 top-0 z-30 ml-auto mb-3 flex w-fit items-center gap-1 rounded-xl border px-1.5 py-1.5 shadow-sm backdrop-blur-md"
+              className={`${isTableEditorFullscreen ? "absolute right-4 top-4 sm:right-6 sm:top-6" : "sticky right-0 top-0 ml-auto mb-3"} z-30 flex w-fit items-center gap-1 rounded-xl border px-1.5 py-1.5 shadow-sm backdrop-blur-md`}
               style={{
                 background: "rgba(250,249,246,0.86)",
                 borderColor: "rgba(204,198,188,0.38)",
@@ -1370,10 +1370,12 @@ export default function SeatingPage() {
               </div>
             ) : (
               <div
-                className="relative mx-auto"
+                className={`${isTableEditorFullscreen ? "mx-0" : "mx-auto"} relative`}
                 style={{
                   width: `${canvasBounds.w * tableZoom}px`,
                   height: `${canvasBounds.h * tableZoom}px`,
+                  minWidth: isTableEditorFullscreen ? "100%" : undefined,
+                  minHeight: isTableEditorFullscreen ? "100%" : undefined,
                 }}
               >
                 {tables.map((table) => (
