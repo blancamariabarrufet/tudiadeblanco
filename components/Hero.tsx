@@ -46,7 +46,7 @@ export function Hero({ onOpenOrder }: HeroProps) {
                 variant="secondary"
                 className="hero-button whitespace-nowrap px-5 py-2.5 text-[0.78rem]"
                 onClick={() => {
-                  window.location.href = "/invisible-host";
+                  window.location.href = "/register";
                 }}
               >
                 {t("hero.tryAi")}

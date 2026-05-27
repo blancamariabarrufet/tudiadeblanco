@@ -12,9 +12,7 @@ type NavProps = {
 
 const linkKeys = [
   { href: "/#experience", key: "nav.experience" },
-  { href: "/invisible-host", key: "nav.host" },
   { href: "/#process", key: "nav.process" },
-  { href: "/product", key: "nav.product" },
   { href: "/pricing", key: "nav.pricing" },
 ];
 

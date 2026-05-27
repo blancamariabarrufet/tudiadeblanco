@@ -22,7 +22,7 @@ export function Footer() {
         <div className="flex flex-wrap gap-5 font-[family-name:var(--font-work-sans)] text-[0.7rem] text-[rgba(26,28,26,0.48)] sm:justify-end">
           <Link href="/#top">{t("footer.privacy")}</Link>
           <Link href="/#top">{t("footer.terms")}</Link>
-          <Link href="/invisible-host">{t("footer.concierge")}</Link>
+          <Link href="/#experience">{t("footer.concierge")}</Link>
           <Link href="/#experience">{t("footer.press")}</Link>
         </div>
       </div>

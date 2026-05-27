@@ -82,7 +82,7 @@ export function Features() {
           </article>
         </div>
 
-        <Link href="/invisible-host" className="experience-assistant-link">
+        <Link href="/register" className="experience-assistant-link">
           <span>{t("features.aiLink")}</span>
           <span aria-hidden="true">→</span>
         </Link>

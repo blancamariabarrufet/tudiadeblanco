@@ -607,7 +607,7 @@ export function ProductShowcase({ onOpenOrder }: ProductShowcaseProps) {
             <Button onClick={onOpenOrder} className="px-6 py-3 text-[0.9rem]">
               <span>{copy.primary}</span>
             </Button>
-            <a href="/invisible-host" className="product-hero__secondary">
+            <a href="/register" className="product-hero__secondary">
               {copy.closingSecondary}
             </a>
           </div>
